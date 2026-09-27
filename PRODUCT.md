@@ -36,7 +36,7 @@ ATMOS '26's theme is **"Augmented Ascension — The Transitional Convergence"**:
 ## Evidence on Hand
 - Stats from previous editions: 30,000+ footfall, 40+ events, ₹12L+ prize pool, 150+ colleges.
 - Past-edition photos: `public/gallery/*` (11 images).
-- Contact: atmos@hyderabad.bits-pilani.ac.in · Instagram @atmos_bitshyd. No phone number or club credits on the site (team decision).
+- Contact: atmos@hyderabad.bits-pilani.ac.in · Instagram @atmos_bitshyd. No phone number on the site (team decision). Events name their organising club (name + SU Connect tagline), never people or contacts.
 - Absent (do not fabricate): 2026 event list, proshow artists, sponsors, testimonials, registration URL, pass prices.
 
 ## Product Principles

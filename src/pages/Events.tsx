@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 import { LayoutGroup, motion } from 'framer-motion';
 import { PageHeader } from '../components/PageHeader';
 import { PassesButton } from '../components/PassesButton';
-import { CATEGORIES, EVENTS, formatPrize, isCategory, type Category } from '../data/events';
+import { CATEGORIES, CLUBS, EVENTS, clubUrl, formatPrize, isCategory, type Category } from '../data/events';
 
 const EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -78,6 +78,40 @@ export default function Events() {
                         {e.title}
                       </h2>
                       {meta.length > 0 && <p className="mt-2 text-stone-dim">{meta.join(' · ')}</p>}
+                      {e.clubs && (
+                        <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-2 text-stone-dim">
+                          {e.clubs.map((slug, j) => (
+                            <Fragment key={slug}>
+                              {j > 0 && <span aria-hidden="true">×</span>}
+                              <a
+                                href={clubUrl(slug)}
+                                target="_blank"
+                                rel="noopener"
+                                className="inline-flex items-center gap-2 text-stone underline-offset-4 hover:underline focus-visible:underline"
+                              >
+                                {CLUBS[slug].logo && (
+                                  // colour comes back when the row is hovered, like the gallery photos
+                                  <img
+                                    src={CLUBS[slug].logo}
+                                    alt=""
+                                    width={28}
+                                    height={28}
+                                    loading="lazy"
+                                    className="duotone size-7 shrink-0 rounded-full transition-[filter] duration-700 ease-out-expo group-hover:[filter:none]"
+                                  />
+                                )}
+                                {CLUBS[slug].name}
+                              </a>
+                            </Fragment>
+                          ))}
+                          {e.clubs.length === 1 && (
+                            <span className="basis-full sm:basis-auto">
+                              <span className="hidden sm:inline">· </span>
+                              {CLUBS[e.clubs[0]].tagline}
+                            </span>
+                          )}
+                        </p>
+                      )}
                     </div>
                     <dl className="grid grid-cols-[8rem_minmax(0,1fr)] gap-6 text-[0.95rem]">
                       <div>

@@ -15,6 +15,7 @@ How every shipped asset was made, so it can be regenerated.
 ## Other rasters
 - `public/og.jpg`, `public/favicon.png`, `public/apple-touch-icon.png`: made in PIL from the official artwork (+ Stardos Stencil / Archivo for the share card).
 - `public/gallery/*`: past-edition photos supplied by the team.
+- `public/clubs/*.webp`: organising-club logos from SU Connect's public `club-logos` bucket (as shown on su-connect-bphc.vercel.app/clubs), centre-cropped to 96 px squares on black in PIL. Alchemy is left out because SU Connect shows E-Cell's logo in its place.
 - Every file in `public/` carries its origin in embedded metadata (`impeccable embed-prompt --scan public`).
 
 ## Local toolkit

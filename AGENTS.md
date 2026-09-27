@@ -38,7 +38,7 @@ CI runs all four on every pull request. A red check blocks the merge.
 ## Hard rules (never break these)
 1. **The official logo is never redrawn, re-exported, recoloured, upscaled or regenerated.** Don't recreate it in CSS/SVG/canvas, as text ("ATMOS" set in a font as a logo), or with an image model. Its layers come only from `scripts/logo_layers.py`, and `scripts/verify_logo.py` must pass. Particles may form the brass ring (`halo`) but never the letters or hands.
 2. **Don't invent facts.** No made-up event names, prizes, dates, artists, sponsors, testimonials, speaker names or numbers. Unknown means a labelled placeholder ("Revealing soon", "TBA"). Only put real, team-confirmed info in `src/data/*`.
-3. **No phone numbers and no club/credit lines** on the site (team decision). Contact is email + Instagram only.
+3. **No phone numbers** on the site (team decision). Contact is email + Instagram only. Events may name their organising club (name + SU Connect tagline), never people or contacts.
 4. **Registration:** passes show "opening soon" until `FEST.registration` in `src/data/fest.ts` gets `open: true` and a real `url`. Don't link anywhere else.
 5. **Accessibility:** keep `prefers-reduced-motion` support (static hero, no preloader), keyboard focus, alt text, and 4.5:1 contrast for body text.
 

@@ -10,7 +10,7 @@ related_targets: ["src/layout"]
 Scope: `/` home page plus the shared layout (nav, footer, page transitions) that every inner route inherits. Mode: **Persuade**.
 Audience/job: outside students deciding to come and register; sponsors checking scale. Action: explore events; passes are "opening soon".
 Proof on hand: official artwork (+ team source layers for letters and machine hand), past-edition photos, 4 past stats. Nothing else may be invented.
-Constraints: official logo pixels untouched (layers verified by scripts/verify_logo.py). No phone number, no club credits (user decision).
+Constraints: official logo pixels untouched (layers verified by scripts/verify_logo.py). No phone number (user decision).
 Build path this session: code-led. Not stored in config.
 
 History: v1 (ring-portal HUD world: tracked mono labels, notched buttons, corner info blocks, marquee, dust) was rejected by the user as "looks like AI made it". User then pointed at Boon Global (awwwards nominee) and asked for an award-level site with an AI-themed design, and more Blender. v2 below replaces v1.

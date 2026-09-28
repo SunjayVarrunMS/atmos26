@@ -234,7 +234,7 @@ Surfaces never cast shadows; only type does. Every display and stencil line carr
 
 ## Shapes
 
-Every text control, card, tab, tag and image has square corners (0px). Structure comes from 1px hairlines rather than filled panels. The circle has exactly one meaning, the logo's ring, and it shows up only in ring-derived pieces: the route iris, the cursor reticle, the 44px menu toggle, the mobile menu's backdrop ring, the preloader dial, and the halo the dots form at the close. Photos are cropped to plain rectangles (4:3 on event cards, 4:5 for the category hover photo, natural width in the gallery strip), with no masks or clip shapes at rest.
+Every text control, card, tab, tag and image has square corners (0px). Structure comes from 1px hairlines rather than filled panels. The circle has exactly one meaning, the logo's ring, and it shows up only in ring-derived pieces: the route iris, the cursor reticle, the 44px menu toggle, the mobile menu's backdrop ring, the preloader dial, and the halo the dots form at the close. Photos are cropped to plain rectangles (4:3 on event rows, 4:5 for the category hover photo, natural width in the gallery strip), with no masks or clip shapes at rest.
 
 ### Named Rules
 **The Ring Is the Only Curve Rule.** If it isn't a ring, it's a rectangle. A rounded button or pill tab borrows a curve that belongs to the logo.
@@ -256,7 +256,7 @@ Plain, heavy rectangles that read like a title card rather than an interface.
 ### Cards / Containers
 Cards are the exception here. Rows are the rule.
 - **Corner Style:** square (0px).
-- **Background:** footer cards use soot at 60% with a stone/12 border and 24px padding (32px from 640px). Event cards have no container: a 4:3 duotone image on soot, a display title, a summary, then a three-column facts row under a hairline.
+- **Background:** footer cards use soot at 60% with a stone/12 border and 24px padding (32px from 640px). Events are rows, not cards: on wide screens the hovered or focused row brings up its 4:3 duotone photo beside the facts, with the category rows' iris entrance. Below 1024px a small 4:3 duotone thumbnail leads each row and gets its colour back on hover.
 - **Shadow Strategy:** none on surfaces; text only (see Elevation & Depth).
 - **Tag:** a void/80 blurred chip, 10px by 4px, in the top-left corner of the image. Small text, capitalized, stone-dim.
 

@@ -19,6 +19,8 @@ export const FEST = {
   // registration isn't open yet; flip this and set the url when it is
   registration: { open: false, url: '' as string },
   coordinates: { lat: 17.5449, lng: 78.5718 },
+  // absolute links for share cards; WhatsApp and Instagram ignore relative ones
+  url: 'https://atmos26.vercel.app',
 } as const;
 
 export const CONTACT = {

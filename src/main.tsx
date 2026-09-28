@@ -11,6 +11,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'events', lazy: async () => ({ Component: (await import('./pages/Events')).default }) },
+      { path: 'events/:id', lazy: async () => ({ Component: (await import('./pages/Event')).default }) },
       { path: 'proshows', lazy: async () => ({ Component: (await import('./pages/Proshows')).default }) },
       { path: 'gallery', lazy: async () => ({ Component: (await import('./pages/Gallery')).default }) },
       { path: 'sponsors', lazy: async () => ({ Component: (await import('./pages/Sponsors')).default }) },

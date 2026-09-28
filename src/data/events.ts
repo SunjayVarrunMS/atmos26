@@ -61,6 +61,9 @@ export interface FestEvent {
   note?: string;
   /** organising club(s), joint events list more than one */
   clubs?: ClubSlug[];
+  /** 4:3 photo, /events/<id>.webp unless set. A generated stand-in until the club's
+   * poster arrives, then the poster replaces that file (see design/ASSETS.md). */
+  image?: string;
 }
 
 const LIST: FestEvent[] = [
@@ -124,11 +127,23 @@ const LIST: FestEvent[] = [
 
 // by category, then biggest prize first; events without a prize keep list order
 const order = CATEGORIES.map((c) => c.id);
-export const EVENTS: FestEvent[] = [...LIST].sort(
+export const EVENTS: (FestEvent & { image: string })[] = LIST.map((e) => ({ ...e, image: e.image ?? `/events/${e.id}.webp` })).sort(
   (a, b) => order.indexOf(a.category) - order.indexOf(b.category) || (b.prize ?? -1) - (a.prize ?? -1),
 );
 
 export const formatPrize = (p: number | null) => (p === null ? '—' : `₹${p.toLocaleString('en-IN')}`);
+
+// one line for an event's share card and page: prize, entry, organisers
+export function eventSummary(e: FestEvent) {
+  const by = e.clubs?.map((c) => CLUBS[c].name).join(' × ');
+  return [
+    e.prize !== null && `${formatPrize(e.prize)} prize pool`,
+    e.fee !== 'TBA' && `Entry ${e.fee === 'Free' ? 'free' : e.fee}`,
+    by && `By ${by}`,
+  ]
+    .filter(Boolean)
+    .join(' · ');
+}
 
 export const isCategory = (v: string | null): v is Category =>
   v === 'competitions' || v === 'workshops' || v === 'experiences';

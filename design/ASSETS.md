@@ -21,6 +21,12 @@ How every shipped asset was made, so it can be regenerated.
 ## Point clouds — `public/shapes/*.bin`
 - `scripts/blender/era_shapes.py` (Blender 5.2, headless: `blender -b --factory-startup -P scripts/blender/era_shapes.py`) models hands (from `design/source/rigged_lowpoly_hand.glb`), pocket watch, locomotive, circuit-board city, DNA, brain and concentric rings procedurally, samples 12,000 surface points each (int16 xyz). Reference GLBs land in `design/3d/`. Only `halo.bin` (the logo's ring, from `scripts/halo_points.py`) is used by the Ascension, for the summit.
 
+## Event images — `public/events/*.webp`
+- Generated stand-ins until each club sends its poster. A poster replaces its event's file (same name, 4:3, WebP ≤ 300 KB) and comes out of `scripts/events/picks.json`.
+- Z-Image-Turbo (`Tongyi-MAI/Z-Image-Turbo`, diffusers `ZImagePipeline`, bf16 with CPU offload on an 8 GB GPU), 9 steps, guidance 0, 1152×864. One scene per event plus a shared lit-darkness style line, in `scripts/events/prompts.json`; no text, logos or faces asked for.
+- `python scripts/events/generate.py [--only id,…] [--seeds …]` renders candidates into `design/review/events/`, `scripts/events/picks.json` records the chosen seed per event, and `python scripts/events/export.py` writes 960×720 WebP (quality 80) with the prompt and seed in XMP.
+- The toolkit lives outside the repo and OneDrive at `C:\Users\sunja\atmos-ai\` (a venv on the system torch, `HF_HOME` there).
+
 ## Other rasters
 - `public/og.jpg`, `public/favicon.png`, `public/apple-touch-icon.png`: made in PIL from the official artwork (+ Stardos Stencil / Archivo for the share card).
 - `public/gallery/*`: past-edition photos supplied by the team.

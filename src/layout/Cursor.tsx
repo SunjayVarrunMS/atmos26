@@ -70,7 +70,7 @@ export function Cursor() {
       <div
         ref={ring}
         aria-hidden
-        className="group pointer-events-none fixed left-0 top-0 z-[100] -ml-[15px] -mt-[15px] size-[30px] opacity-0 transition-opacity duration-300"
+        className="reticle-ring group pointer-events-none fixed left-0 top-0 z-[100] -ml-[15px] -mt-[15px] size-[30px] opacity-0 transition-opacity duration-300"
       >
         <svg viewBox="0 0 30 30" className="size-full overflow-visible text-brass transition-colors duration-300 group-data-[hot=true]:text-signal">
           <circle cx="15" cy="15" r="11" fill="none" stroke="currentColor" strokeWidth="1" />

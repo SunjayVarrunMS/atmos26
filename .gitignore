@@ -35,3 +35,6 @@ design/logo/layers/
 .recording/
 .vercel
 .env*
+
+# raw Blender exports (packed copies ship; see scripts/blender/world_chambers.py)
+public/world/*.raw.glb

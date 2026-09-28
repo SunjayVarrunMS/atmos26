@@ -211,6 +211,8 @@ html.has-reticle,
 html.has-reticle * { cursor: none; }
 html.has-reticle input,
 html.has-reticle textarea { cursor: text; }
+/* over the ascent the loupe draws its own ring; the reticle keeps its dot */
+html[data-lens] .reticle-ring { visibility: hidden; }
 
 /* statements: condensed stencil caps, like crate markings in a machine shop */
 @utility display {

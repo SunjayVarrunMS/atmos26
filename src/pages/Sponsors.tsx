@@ -6,7 +6,7 @@ export default function Sponsors() {
   const mail = `mailto:${CONTACT.email}?subject=${encodeURIComponent('Sponsoring ATMOS 2026')}`;
   return (
     <>
-      <PageHeader title="Sponsors">
+      <PageHeader floor="steam" title="Sponsors">
         The 2026 partners are being announced. If your company wants to stand where the human hand meets the machine,
         talk to us.
       </PageHeader>

@@ -75,6 +75,7 @@ export const steam: ChamberSpec = {
   span: [-3.6, 3.6],
   // a long engine: stand further back on a phone
   portrait: 1.55,
+  backdrop: { pos: [14.0, 0.0, 15.0], look: [1.8, -0.8, 0] },
   camera: [
     { t: 0.0, pos: [2.0, -9.5, 15.0], look: [1.0, -3.5, 0] },
     { t: 0.14, pos: [3.0, -2.0, 21.0], look: [1.0, -0.5, 0] },

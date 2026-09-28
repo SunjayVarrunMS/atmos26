@@ -8,7 +8,7 @@ const EXPO = [0.16, 1, 0.3, 1] as const;
 export default function Proshows() {
   return (
     <>
-      <PageHeader title="Proshows">
+      <PageHeader floor="intelligence" title="Proshows">
         Three nights on the main stage. The line-up stays sealed until the team reveals it on{' '}
         <a href={CONTACT.instagramHref} target="_blank" rel="noreferrer" className="text-stone underline decoration-brass/60">
           {CONTACT.instagram}

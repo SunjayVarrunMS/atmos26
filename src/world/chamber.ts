@@ -30,6 +30,8 @@ export interface ChamberSpec {
   animate?: (root: THREE.Object3D, time: number, dt: number, ctx: MotionContext) => void;
   /** vertical extent used for the pour order; defaults to the model bounds */
   span?: [number, number];
+  /** how the machine is framed behind an inner page's title */
+  backdrop?: { pos: [number, number, number]; look: [number, number, number] };
   /** extra pull-back on tall (phone) screens, for wide machines */
   portrait?: number;
   /** blueprint order: lower parts first (default), or outward from the axis */

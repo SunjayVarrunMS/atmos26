@@ -23,7 +23,7 @@ export default function Events() {
 
   return (
     <>
-      <PageHeader title="Events">
+      <PageHeader floor="silicon" title="Events">
         Competitions, workshops and experiences across three days on campus. Fees and prize pools are as
         announced; days and team sizes are confirmed as each event opens.
       </PageHeader>

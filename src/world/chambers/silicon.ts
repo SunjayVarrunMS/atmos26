@@ -113,6 +113,7 @@ export const silicon: ChamberSpec = {
   span: [-3.2, 3.2],
   drawFrom: 'radial',
   portrait: 1.2,
+  backdrop: { pos: [13.0, 9.0, 14.0], look: [0.0, -1.5, 0] },
   setup: pulses,
   camera: [
     // level with the board as its dots arrive

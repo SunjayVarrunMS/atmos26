@@ -44,7 +44,7 @@ export default function Contact() {
   ];
   return (
     <>
-      <PageHeader title="Contact">Questions about events, passes, stays or sponsorship. Someone from the team will answer.</PageHeader>
+      <PageHeader floor="genome" title="Contact">Questions about events, passes, stays or sponsorship. Someone from the team will answer.</PageHeader>
 
       <section className="px-4 pb-24 sm:px-8" aria-label="Ways to reach us">
         <ul className="mx-auto max-w-[1440px] border-b border-stone/12">

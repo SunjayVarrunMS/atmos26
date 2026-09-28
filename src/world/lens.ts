@@ -17,6 +17,7 @@ export class Lens {
   private lastTouch = -1e9;
   private fine: boolean;
   private enabled = false;
+  private rect: DOMRect | null = null;
   private cleanup: () => void;
 
   private maxRadius: () => number;
@@ -61,20 +62,25 @@ export class Lens {
   }
 
   /**
-   * @param focus where the machine sits on screen (css px), for the idle drift
+   * @param focus where the machine sits in the canvas (css px), for the idle drift
+   * @param rect  the canvas on the page, when it doesn't fill the viewport
    */
-  update(dt: number, now: number, W: number, H: number, focus: THREE.Vector2) {
+  update(dt: number, now: number, W: number, H: number, focus: THREE.Vector2, rect?: DOMRect) {
+    this.rect = rect ?? null;
+    const ox = rect?.left ?? 0, oy = rect?.top ?? 0;
+    const inside =
+      !rect || (this.target.x >= rect.left && this.target.x <= rect.right && this.target.y >= rect.top && this.target.y <= rect.bottom);
     let open = false;
     if (this.fine) {
-      open = this.want && this.enabled;
+      open = this.want && this.enabled && inside;
     } else if (this.enabled) {
-      if (now < this.tapUntil) open = true;
+      if (now < this.tapUntil) open = inside;
       else if (now - this.lastTouch > 2500) {
         // idle drift: a slow figure-of-eight over the machine
         const t = now / 1000;
         this.target.set(
-          focus.x + Math.sin(t * 0.45) * W * 0.16,
-          focus.y + Math.sin(t * 0.9) * H * 0.1,
+          ox + focus.x + Math.sin(t * 0.45) * W * 0.16,
+          oy + focus.y + Math.sin(t * 0.9) * H * 0.1,
         );
         if (this.pos.x < -900) this.pos.copy(this.target);
         open = true;
@@ -88,9 +94,11 @@ export class Lens {
     document.documentElement.toggleAttribute('data-lens', this.radius > 4 && this.fine);
   }
 
-  /** uniform value: drawing-buffer px, y up */
+  /** uniform value: drawing-buffer px, y up, relative to the canvas */
   write(out: THREE.Vector3, H: number, dpr: number) {
-    out.set(this.pos.x * dpr, (H - this.pos.y) * dpr, this.radius * dpr);
+    const x = this.pos.x - (this.rect?.left ?? 0);
+    const y = this.pos.y - (this.rect?.top ?? 0);
+    out.set(x * dpr, (H - y) * dpr, this.radius * dpr);
   }
 
   dispose() {

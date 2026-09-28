@@ -30,7 +30,7 @@ export default function Gallery() {
 
   return (
     <>
-      <PageHeader title="Gallery">Moments from past editions of ATMOS. Click any photo to see it in colour.</PageHeader>
+      <PageHeader floor="clockwork" title="Gallery">Moments from past editions of ATMOS. Click any photo to see it in colour.</PageHeader>
 
       <section className="px-4 pb-28 sm:px-8" aria-label="Photos">
         <ul className="mx-auto max-w-[1440px] columns-1 gap-4 sm:columns-2 lg:columns-3">

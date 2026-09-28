@@ -175,6 +175,7 @@ export const intelligence: ChamberSpec = {
   url: '/world/intelligence.glb',
   span: [-7.4, 7.8],
   setup: wires,
+  backdrop: { pos: [5.0, -1.5, 19.0], look: [0.0, 0.6, 0] },
   camera: [
     { t: 0.0, pos: [1.0, -11.0, 15.0], look: [0.0, -6.0, 0] },
     { t: 0.14, pos: [1.5, -4.0, 20.0], look: [0.0, -1.5, 0] },

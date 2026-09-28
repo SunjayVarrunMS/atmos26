@@ -81,6 +81,7 @@ export class Engine {
   private dprScale = 1;
   /** the journey progress the world shows; on phones it eases after the scroll */
   private flow = 0;
+  private opacity = '';
 
   private host: HTMLElement;
   private tier: LiveTier;
@@ -278,7 +279,8 @@ export class Engine {
       const vh = window.innerHeight;
       fade = Math.min(THREE.MathUtils.clamp((vh - r.top) / (vh * 0.85), 0, 1), THREE.MathUtils.clamp(r.bottom / (vh * 0.6), 0, 1));
     }
-    this.host.style.opacity = fade.toFixed(3);
+    const opacity = fade.toFixed(3);
+    if (opacity !== this.opacity) this.host.style.opacity = this.opacity = opacity;
     if (fade <= 0.001) {
       world.set({ segment: -1, text: false });
       this.settle = 30;
@@ -447,10 +449,12 @@ export class Engine {
         const info = this.renderer.info.render;
         this.debug.textContent = `tier ${this.tier}  ${(1 / mid).toFixed(0)} fps  dpr ${this.dpr.toFixed(2)}\ncalls ${info.calls}  tris ${(info.triangles / 1000).toFixed(0)}k`;
       }
-      if (mid > 1 / 26 && !this.debug) {
+      // below ~45 fps a phone feels rough: shed pixels in place first, and
+      // rebuild at a lower tier only if that still can't hold 26
+      const rough = mid > 1 / 45 && this.dpr > 0.8 && this.dprScale > 0.6;
+      if ((rough || mid > 1 / 26) && !this.debug) {
         this.frames = [];
-        // first draw fewer pixels in place; rebuilding at a lower tier is the last resort
-        if (this.dpr > 0.8 && this.dprScale > 0.6) {
+        if (rough) {
           this.dprScale *= 0.8;
           this.settle = 30;
           this.resize();

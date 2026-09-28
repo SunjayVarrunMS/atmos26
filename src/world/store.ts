@@ -80,6 +80,14 @@ export const useWorld = () => useSyncExternalStore(world.subscribe, world.get, w
 export function journeyProgress() {
   if (!journey) return -1;
   const r = journey.getBoundingClientRect();
-  const run = r.height - window.innerHeight;
+  const run = journeyRun(journey);
   return run > 0 ? -r.top / run : -1;
+}
+
+/** scroll length of the pinned ascent. Measured against the pinned stage
+ *  (small viewport height), not innerHeight, which changes as a phone's
+ *  address bar hides and would make the progress jump */
+export function journeyRun(el: HTMLElement) {
+  const stage = el.querySelector<HTMLElement>('[data-stage]');
+  return el.offsetHeight - (stage?.offsetHeight ?? window.innerHeight);
 }

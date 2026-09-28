@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { ERAS } from '../../data/eras';
 import { useLenis } from '../SmoothScroll';
-import { journeyProgress, world } from '../../world/store';
+import { journeyProgress, journeyRun, world } from '../../world/store';
 import { BOUNDS, SEGMENTS } from '../../world/timeline';
 
 // where each era sits on the journey, and where its machine stands built
@@ -43,7 +43,7 @@ export function FloorDial({ active }: { active: number }) {
     const el = world.journey();
     if (!el) return;
     const top = el.getBoundingClientRect().top + window.scrollY;
-    const run = el.offsetHeight - window.innerHeight;
+    const run = journeyRun(el);
     const y = top + to * run;
     if (lenis) lenis.scrollTo(y, { duration: 2.6, easing: (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2) });
     else window.scrollTo({ top: y });

@@ -1,7 +1,6 @@
 import { useRef } from 'react';
 import { Link } from 'react-router';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ShapeSection } from '../particles/ShapeSection';
 import { GALLERY } from '../../data/fest';
 import { useReducedMotion } from '../../lib/hooks';
 
@@ -14,7 +13,7 @@ export function GalleryStrip() {
   const x = useTransform(scrollYProgress, [0, 1], ['4%', '-38%']);
 
   return (
-    <ShapeSection pose={{ shape: 'dust', opacity: 0 }} className="relative overflow-hidden py-[14svh]" aria-labelledby="gal-title">
+    <section className="relative overflow-hidden py-[14svh]" aria-labelledby="gal-title">
       <div className="mx-auto flex max-w-[1440px] flex-wrap items-end justify-between gap-6 px-4 sm:px-8">
         <h2 id="gal-title" className="display text-[clamp(2rem,3.6vw,3.4rem)] text-stone">
           Been here <span className="text-brass-hi">before?</span>
@@ -39,6 +38,6 @@ export function GalleryStrip() {
           ))}
         </motion.ul>
       </div>
-    </ShapeSection>
+    </section>
   );
 }

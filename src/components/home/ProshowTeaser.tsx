@@ -1,6 +1,5 @@
 import { Link } from 'react-router';
 import { motion } from 'framer-motion';
-import { ShapeSection } from '../particles/ShapeSection';
 import { PROSHOWS } from '../../data/proshows';
 
 const EXPO = [0.16, 1, 0.3, 1] as const;
@@ -8,7 +7,7 @@ const EXPO = [0.16, 1, 0.3, 1] as const;
 // Three nights as full-width bands, artists sealed until the team announces them.
 export function ProshowTeaser() {
   return (
-    <ShapeSection pose={{ shape: 'dust', opacity: 0 }} className="relative overflow-hidden px-4 py-[16svh] sm:px-8" aria-labelledby="pro-title">
+    <section className="relative overflow-hidden px-4 py-[16svh] sm:px-8" aria-labelledby="pro-title">
       <img src="/gallery/proshow.jpg" alt="" className="duotone absolute inset-0 -z-10 size-full object-cover opacity-40" />
       <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#000_0%,rgb(0_0_0/0.4)_35%,rgb(0_0_0/0.4)_65%,#000_100%)]" />
       <div className="mx-auto max-w-[1440px]">
@@ -44,6 +43,6 @@ export function ProshowTeaser() {
           Proshow details
         </Link>
       </div>
-    </ShapeSection>
+    </section>
   );
 }

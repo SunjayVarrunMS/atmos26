@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ShapeSection } from '../particles/ShapeSection';
 import { CATEGORIES, EVENTS } from '../../data/events';
 
 const EXPO = [0.16, 1, 0.3, 1] as const;
@@ -17,11 +16,7 @@ const COVER: Record<string, string> = {
 export function Categories() {
   const [hot, setHot] = useState<string | null>(null);
   return (
-    <ShapeSection
-      pose={{ shape: 'dust', opacity: 0.25, spin: 0.03 }}
-      className="relative px-4 py-[16svh] sm:px-8"
-      aria-labelledby="cats-title"
-    >
+    <section className="relative px-4 py-[16svh] sm:px-8" aria-labelledby="cats-title">
       <div className="mx-auto max-w-[1440px]">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <h2 id="cats-title" className="display text-[clamp(2rem,3.6vw,3.4rem)] text-stone">
@@ -77,6 +72,6 @@ export function Categories() {
           </AnimatePresence>
         </ul>
       </div>
-    </ShapeSection>
+    </section>
   );
 }

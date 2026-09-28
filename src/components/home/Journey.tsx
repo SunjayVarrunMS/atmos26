@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ERAS } from '../../data/eras';
 import { FEST } from '../../data/fest';
 import { useFinePointer } from '../../lib/hooks';
+import { FloorDial } from './FloorDial';
 import { guessTier } from '../../world/quality';
 import { useWorld, world } from '../../world/store';
 import { BOUNDS, SEGMENTS, TOTAL_VH } from '../../world/timeline';
@@ -123,25 +124,7 @@ function Pinned() {
           )}
         </AnimatePresence>
 
-        {/* era index: which floor of the ascent you're on */}
-        <ol
-          aria-hidden
-          className={`absolute inset-x-0 bottom-6 mx-auto hidden w-full max-w-[1440px] gap-5 px-8 transition-opacity duration-700 md:flex ${
-            eraIndex >= 0 ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          {ERAS.map((e, i) => (
-            <li key={e.id} className="flex-1">
-              <span className={`block h-px w-full transition-colors duration-700 ${i <= eraIndex ? 'bg-brass' : 'bg-stone/15'}`} />
-              <span
-                className={`meta mt-3 block transition-colors duration-500 ${i === eraIndex ? 'text-stone' : 'text-stone-mute'}`}
-                style={{ textTransform: 'none' }}
-              >
-                {e.when} · {e.name}
-              </span>
-            </li>
-          ))}
-        </ol>
+        <FloorDial active={eraIndex} />
       </div>
     </section>
   );

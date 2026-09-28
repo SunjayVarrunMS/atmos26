@@ -1,6 +1,6 @@
 ---
 name: ATMOS '26
-description: The fest's own countdown campaign, played at site scale. A black void, brass dots and a stencil clock.
+description: The fest's own countdown campaign, played at site scale, then an ascent through five lit machines to the logo.
 colors:
   void: "#000000"
   soot: "#0d0c0a"
@@ -138,35 +138,37 @@ components:
 
 ## Overview
 
-**Creative North Star: "The Countdown Reel, Played at Site Scale"**
+**Creative North Star: "The Ascension: The Countdown Reel, Then a Climb Through the Eras"**
 
-The site is the fest's Instagram campaign made navigable. It opens on the countdown reel's end card: the official artwork builds itself layer by layer, then a live days : hours : minutes : seconds clock lands under it in the reel's stencil, digits rolling like a mechanical counter, with a red glitch. Below that, one field of twelve thousand brass dots turns into each era's machine as you scroll: a pocket watch, a locomotive, a circuit city, a DNA helix, a brain, then two hands, then the logo's ring. Everything sits on pure black. The page is lit by the dots, a single brass-lit phrase per statement, and whatever photo is under the pointer.
+The site is the fest's Instagram campaign made navigable. It opens on the countdown reel's end card: the official artwork builds itself layer by layer, then a live days : hours : minutes : seconds clock lands under it in the reel's stencil, digits rolling like a mechanical counter, with a red glitch. Below that, the page becomes a shaft you rise through: a dive down past brass collars to the 1700s, then five lit machines, each on its own floor: a tower-clock movement, a locomotive's running gear, a circuit board grown into a skyline, the 1953 double-helix model, and a string-art network. Every machine is first perceived as dots, then drawn as a blueprint, then cast in metal from the bottom up, and it leaves as dust streaming to the next floor. At the summit the dust gathers into the logo's ring and the untouched artwork lands in it. A loupe under the pointer shows each machine the way a machine sees it. Everything sits in lit darkness: black ground, light that falls from above, and a single brass-lit phrase per statement.
 
 Density is low and scale is high. Statements are set in condensed stencil caps (Big Shoulders Stencil) at confident but measured sizes; only page titles run poster-scale. Lists are full-width hairline rows, not grids of cards. Photos rest in a black-to-brass duotone and get their colour back only when you point at them. The surface is analogue film rather than a HUD: static grain over everything, and projector-gate scratches over the hero and page headers. The world is built to refuse the dark sci-fi HUD kit (mono micro-labels, notched buttons, corner brackets, glow orbs) and the generic fest template (video hero and neon cards).
 
 The official artwork is the identity, and it is never redrawn. It may be split into its original layers and animated (build-up, idle parallax), but every visible pixel stays identical to `atmos-website.jpg`, and `scripts/verify_logo.py` checks the layers. Dots may trace the ring, but the raster always supplies the logo itself.
 
 **Key Characteristics:**
-- Pure black void. The only light comes from brass dots, stone text and one brass-hi phrase per statement.
+- Lit darkness. Black ground; light falls from above onto brass, iron and glass, and one brass-hi phrase carries each statement.
 - Three type voices: the reel stencil for time and names, condensed stencil caps for statements, plain Archivo for reading and controls.
 - Photos rest in a brass duotone and regain colour on hover.
 - Film grain everywhere, with projector scratches on the hero and page headers.
 - Rectangular text controls with square corners. The circle belongs only to the ring motif.
-- Motion is expo-out: blur-to-sharp reveals, one iris wipe between routes, particles that swirl between Blender shapes.
+- Motion is expo-out: blur-to-sharp reveals, one iris wipe between routes, and one scroll timeline that drives the whole ascent.
+- Human view and machine view: the same object as metal, as a blueprint, and as a point cloud inside the loupe.
 
 ## Colors
 
 A black void with brass as the structural ink, stone for reading, teal light held inside rings, and red that appears only for a glitch frame.
 
 ### Primary
-- **Reel Brass** (brass): hairlines that carry structure (nav underline, era progress bars, the iris ring, underline decoration at 60%), the "'26" in the wordmark, era years, the date separator slash, footer arrow icons, the skip link fill and the text selection fill. It is the base tone of the dot field.
-- **Lit Brass** (brass-hi): the one highlighted phrase in each statement ("Pick your **arena**", "**Names sealed.**"), the active nav link, the hovered category row, stat labels, the primary button's hover fill and the reticle dot. It is also the bright end of the dot field.
+- **Reel Brass** (brass): hairlines that carry structure (nav underline, the floor dial, the iris ring, underline decoration at 60%), the "'26" in the wordmark, era years, the date separator slash, footer arrow icons, the skip link fill and the text selection fill. It is the base tone of the dust and the ink of every blueprint.
+- **Lit Brass** (brass-hi): the one highlighted phrase in each statement ("Pick your **arena**", "**Names sealed.**"), the active nav link, the hovered category row, stat labels, the primary button's hover fill and the reticle dot. It is also the bright end of the dust, the floor dial's needle and the pour front as it cools.
 - **Tarnished Brass** (brass-lo): the scrollbar thumb, the minor ticks on the preloader dial, and the far-depth colour that dots fade into.
+- **Brass ink:** the blueprint lines of every machine are brass (`#d9a654`) at 80%, blended as ink (normal blending), so dense strokes never sum to white. Only the pen tip is hot enough to bloom.
 - **Brass Hairline** (brass-line): the scrolled nav's bottom border and the ring outline on the circular menu toggle.
 
 ### Secondary
-- **Ring Teal** (teal): about 14% of the dots in the particle field, the vortex glow inside the preloader dial and the mobile menu ring. It is never a UI fill or a text colour.
-- **Signal Cyan** (signal): the focus outline, the glitch's cyan channel, dots flashing as the cursor pushes through them, and the ping on the contact map.
+- **Ring Teal** (teal): about 14% of the dust, the machine view inside the loupe (the loupe is a ring), the vortex glow inside the preloader dial and the mobile menu ring. It is never a UI fill or a text colour.
+- **Signal Cyan** (signal): the focus outline, the glitch's cyan channel, the near readings inside the loupe, a thought climbing the network, and the ping on the contact map.
 
 ### Tertiary
 - **Glitch Red** (glitch): the red channel of the stencil glitch split (countdown, proshow codenames, 404) and the preloader's second hand. Nothing else.
@@ -181,7 +183,7 @@ A black void with brass as the structural ink, stone for reading, teal light hel
 ### Named Rules
 **The One Lit Phrase Rule.** Each statement gets exactly one brass-hi phrase, and the rest stays stone. If two phrases are lit, neither is.
 
-**The Teal Lives Inside Rings Rule.** Teal only appears inside the dot field or inside a ring (the preloader dial, the mobile menu). A teal glow floating on its own is an orb, and orbs are outside this world.
+**The Teal Lives Inside Rings Rule.** Teal only appears in the dust, inside a ring (the loupe, the preloader dial, the mobile menu), or as signal on the network's wires. A teal glow floating on its own is an orb, and orbs are outside this world.
 
 **The Red Is a Glitch Rule.** Glitch red only shows for the few frames of a channel split or on the preloader's second hand. It is never a fill, a border or a status colour.
 
@@ -225,7 +227,7 @@ Breakpoints are Tailwind defaults (640, 768, 1024px). The nav switches to its fu
 
 ## Elevation & Depth
 
-Surfaces never cast shadows; only type does. Every display and stencil line carries `--shadow-text-display` (a soft em-relative drop like the one under the logo's stone letters, plus a wide dark falloff), and reading copy that can sit over dots or photos takes the `text-lift` utility (`--shadow-text-copy`). On plain black the shadow is invisible; over the dot field it carves a dark bed under each letter so the words stay readable. The glitch pseudo-elements drop it (`text-shadow: none`) so the red/teal split stays clean, and controls never get it (dark text on the stone button must not halo). Depth otherwise comes from the dot field: dots shrink with distance, fade in opacity (down to 45%) and cool toward tarnished brass the further back they sit. Blur and parallax add the rest (the logo stage scales to 1.12 and drifts 14% as the hero scrolls away). The film layers sit on top: fixed SVG grain at 5% opacity that steps through six positions every 0.9 s, and a scratch canvas at 12 fps. The only translucent surfaces are the scrolled nav (void at 80% with a medium backdrop blur) and the category tag on event images (void at 80% with a blur).
+Surfaces never cast shadows; only type does. Every display and stencil line carries `--shadow-text-display` (a soft em-relative drop like the one under the logo's stone letters, plus a wide dark falloff), and reading copy that can sit over dots or photos takes the `text-lift` utility (`--shadow-text-copy`). On plain black the shadow is invisible; over the world it carves a dark bed under each letter so the words stay readable. Copy that sits beside a machine also gets a soft void shade on its side of the screen (left on wide screens, below on phones). The glitch pseudo-elements drop it (`text-shadow: none`) so the red/teal split stays clean, and controls never get it (dark text on the stone button must not halo). Depth otherwise comes from the world: exponential fog into black, baked ambient occlusion on every part, a warm skylight above and a cool rim behind, and bloom only on things that emit light (the pour front, the pen tip, signal on copper and wire). Blur and parallax add the rest (the logo stage scales to 1.12 and drifts 14% as the hero scrolls away). The film layers sit on top: fixed SVG grain at 5% opacity that steps through six positions every 0.9 s, and a scratch canvas at 12 fps. The only translucent surfaces are the scrolled nav (void at 80% with a medium backdrop blur) and the category tag on event images (void at 80% with a blur).
 
 ### Named Rules
 **The Flat Void Rule.** Surfaces never lift. If something needs to come forward, it gets brighter (stone to brass-hi) or gets its colour back. Cards, buttons and images never cast a shadow; the only shadow on the site belongs to type.
@@ -270,8 +272,22 @@ Every photo passes through one SVG filter that maps luminance from black to bras
 ### Category rows (signature)
 Full-width rows with the category name in display caps at clamp(1.9rem, 8vw, 7.5rem) on the left, and a stencil count plus a blurb on the right. Hovering a row turns it brass-hi and shifts it 12px right, dims every other row to stone/25, and brings up that category's 4:5 duotone photo. The photo enters with an iris-like vertical clip, a small rotation and a scale from 0.9. Colour goes to whatever is active.
 
-### Particle field (signature)
-One fixed WebGL layer of 12,000 dots behind the page. Each section declares a pose (shape, position, size, tilt, spin, opacity, plus phone overrides) and takes over the field when it crosses the middle of the viewport. There are eight baked shapes (hands, watch, locomotive, city, DNA, brain, rings, halo) plus procedural dust as the resting state. Transitions ripple: each dot leaves at its own moment, swirls outward mid-flight and settles with a cubic ease-out. At rest, the dots breathe slightly. They are coloured from brass-hi to brass, darkening toward brass-lo with depth, with a roughly 14% sprinkle of teal to signal. On fine pointers the cursor pushes dots aside, and the pushed dots flash toward signal. Sections that need to be read (gallery, proshows) set the field to opacity 0.
+### The Ascension (signature)
+One fixed WebGL world behind the home page, driven by a single scroll timeline (`src/world/timeline.ts`). A dive down a shaft of machined brass collars, then five floors, one per era, then the summit. Every floor plays the same beats on its own slice of the scroll: **arrive** (the machine's points rise into place), **draw** (its blueprint is drawn part by part: round parts swept by a compass, the rest along their length, lower parts first), **cast** (metal pours into the drawing from the bottom up behind a thin molten front), **stand** (the machine runs; copy is readable), **exit** (it breaks into dust that streams up to the next floor). The camera moves like a loupe, not a roller coaster: small, deliberate moves per floor, rising through a collar between floors.
+
+Machines are modelled in Blender with real mechanics: a clock train with true ratios running on live seconds; a locomotive whose rods and Walschaerts valve gear are solved from the crank angle and turn faster while you scroll; a board whose copper carries signal packets; the double helix, spelling ATMOS'26, rewriting one base pair at a time; a network that carries a thought to its apex on click or tap. At the summit the dust forms the logo's ring (sampled from the ring layer only) and the official JPEG is laid over it, aligned to the ring the engine projects.
+
+### The loupe (signature)
+The pointer becomes a brass ring with the reticle's four ticks. Inside it the metal is cut away and the machine is shown as a point cloud in teal and signal, with a scan band climbing it and the blueprint faint behind, magnified slightly with a glass edge. It opens over the world only (never over controls) once a machine is standing. On touch it opens where you tap, and drifts over the machine on its own when you haven't touched for a while.
+
+### Floor dial
+A lift indicator on the right edge of wide screens: a hairline shaft with a stop for every era (1700s at the foot, 2026 at the head), labels in the condensed label voice, and a brass diamond needle that rides with the scroll. Choosing a stop rides the lift there over 2.6 s. On phones it is one brass hairline along the bottom that fills as you rise.
+
+### Floor backdrops
+Inner pages stand on a floor: Events on the circuit board, Proshows under the network, Gallery by the clockwork, Sponsors beside the locomotive, Contact at the double helix. The floor is perceived, drawn and cast as the page arrives (about five seconds), then runs behind the title with the loupe, fading into the page at the bottom. Without WebGL, the header shows the floor's rendered still.
+
+### Sound
+Synthesised in the browser, never recorded, and off until the visitor turns it on (the choice is remembered). A drone that opens up as you rise, tick and tock on the escapement's seconds, a chuff on every quarter turn of the drivers, blips over a mains hum, a struck bell for each rewritten base pair, a swell and chime for a thought, and a chord as the artwork lands. The toggle is a plain text control in the nav, on the home page only.
 
 ### Countdown (signature)
 The reel's title card, live to the second. It counts days, hours, minutes and seconds to opening (09:00 IST on day one) and switches to "Day N is live" during the fest and "See you in '27" after it. It is the stencil at 74% width. Each digit sits in a fixed 0.6em slot and rolls up to its new value (0.55 s, expo-out, 4px blur to sharp); with reduced motion the digits swap in place. Screen readers get one sentence that changes once a day ("27 days to go until ATMOS 2026."), not the ticking digits. A red and cyan channel split fires 0.9 s after the hero lands, then every 5–12 s. Each split runs 0.42 s in two steps, with clipped slices offset by 2–4px. The same split runs on hover over proshow codenames and once on the 404 title.
@@ -290,13 +306,14 @@ A canvas overlay that redraws at 12 fps and pauses when off screen. Each frame d
 ## Do's and Don'ts
 
 ### Do:
-- **Do** set every surface on void (#000) and let brass dots, stone text and one brass-hi phrase carry the light.
+- **Do** keep the ground black and let the light come from the world: skylight on metal, emissive fronts, stone text and one brass-hi phrase.
 - **Do** use the stencil for time, years, codenames and the wordmark, Big Shoulders Stencil caps (700 weight, 0.01em tracking) for statements, and plain Archivo in sentence case for reading and controls.
 - **Do** compress the countdown to 74% width on one line.
 - **Do** set lists as full-width rows on stone/12 hairlines, with 24px row padding (32px from 768px), inside the 1440px container.
 - **Do** keep text controls as square-cornered rectangles (primary is a stone fill, secondary is a stone/35 outline, both 48px tall).
 - **Do** pass every photo through the duotone filter and return its colour on hover over 700ms.
-- **Do** give each new section a particle pose, and set the field to opacity 0 where text needs the whole stage.
+- **Do** give each new floor the same beats (arrive, draw, cast, stand, exit), real mechanics, and a camera that moves like a loupe.
+- **Do** keep bloom for things that emit light; metal is lit, never glowing.
 - **Do** use the expo-out easing for reveals and hovers, blur-to-sharp for statements, and the iris for route changes only.
 - **Do** use lucide icons at 1.5 stroke (16px inline, 20–24px for lightbox controls), in brass or the current text colour, where an icon is needed.
 - **Do** keep the official artwork pixel-identical. Animate its original layers and verify them with scripts/verify_logo.py.

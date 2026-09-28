@@ -22,7 +22,8 @@ ATMOS '26's theme is **"Augmented Ascension — The Transitional Convergence"**:
 - Launch campaign runs on Instagram (@atmos_bitshyd) with reels: an era montage that builds the logo, and a "30 days to go" countdown reel.
 
 ## Capabilities and Constraints
-- Stack: Vite + React 19 + TypeScript + Tailwind v4 + React Three Fiber/drei + framer-motion + Lenis, multi-page via react-router.
+- Stack: Vite + React 19 + TypeScript + Tailwind v4 + three.js (raw) + postprocessing + framer-motion + Lenis, multi-page via react-router.
+- The home page is the Ascension: a scroll-driven WebGL world with one machine per era. Weak devices and reduced motion get rendered stills instead; the logo, countdown and facts always paint first.
 - Pages: Home, Events (filterable by category), Proshows, Gallery, Sponsors, Contact, 404.
 - **Registration is not open yet**: "Get Passes" / "Register" show "Registrations opening soon" until a real URL is supplied.
 - Event list, proshow artists and sponsors are placeholders until the team provides them.

@@ -15,7 +15,7 @@ npm run lint
 - **[AGENTS.md](AGENTS.md)**: rules for humans and AI agents (Antigravity, Cursor, Copilot). Read it first.
 - **[DESIGN.md](DESIGN.md)**: the visual system (colours, type, motion, do's and don'ts).
 - **[PRODUCT.md](PRODUCT.md)**: audience, facts and what must not be invented.
-- **[design/ASSETS.md](design/ASSETS.md)**: how the logo layers and 3D particle shapes are generated.
+- **[design/ASSETS.md](design/ASSETS.md)**: how the logo layers, the Ascension's machines and stills, and the point clouds are generated.
 
 The official logo is never redrawn. `python scripts/verify_logo.py` proves the hero's logo layers match `atmos-website.jpg` pixel for pixel, and CI runs it on every pull request.
 

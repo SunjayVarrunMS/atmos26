@@ -13,6 +13,8 @@
 /src/components/hero/           @SunjayVarrunMS
 /src/components/particles/      @SunjayVarrunMS
 /public/shapes/                 @SunjayVarrunMS
+/src/world/                     @SunjayVarrunMS
+/public/world/                  @SunjayVarrunMS
 
 # rules the agents follow
 /DESIGN.md                      @SunjayVarrunMS

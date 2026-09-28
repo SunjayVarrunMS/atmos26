@@ -16,6 +16,8 @@ export const shared = {
   uRes: { value: new THREE.Vector2(1, 1) },
   uTime: { value: 0 },
   uPixelRatio: { value: 1 },
+  /** when the visitor last sent a thought through the network (uTime) */
+  uFire: { value: -100 },
 };
 
 /** per-chamber beat uniforms, one object per chamber */

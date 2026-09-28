@@ -124,7 +124,8 @@ export class Shaft {
     this.group.add(bolts);
 
     // columns the full height of the shaft
-    const bottom = -FLOOR, top = floors * FLOOR + FLOOR;
+    // up to the top collar only: above it is open dark, the summit
+    const bottom = -FLOOR, top = (floors - 1) * FLOOR + FLOOR / 2 + 0.4;
     const col = columnGeometry(top - bottom);
     this.disposables.push(col);
     // only behind the machines: the camera works on the near side of the shaft

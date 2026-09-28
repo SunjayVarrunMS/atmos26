@@ -7,7 +7,8 @@ import { clockwork } from './chambers/clockwork';
 import { steam } from './chambers/steam';
 import { silicon } from './chambers/silicon';
 import { genome } from './chambers/genome';
-import { SketchChamber } from './chambers/sketch';
+import { intelligence } from './chambers/intelligence';
+import { Summit, SUMMIT_RING } from './chambers/summit';
 import { makeEnvironment } from './env';
 import { Lens } from './lens';
 import { shared } from './materials';
@@ -37,6 +38,7 @@ export class Engine {
   private lens: Lens;
   private shaft: Shaft;
   private floors: Floor[];
+  private summit: Summit;
   private loader = new GLTFLoader();
   private envRT: THREE.WebGLRenderTarget;
   private key = new THREE.DirectionalLight(new THREE.Color(1.0, 0.84, 0.66), 2.6);
@@ -60,6 +62,7 @@ export class Engine {
   private tmp = new THREE.Vector3();
   private tmp2 = new THREE.Vector3();
   private lastP = 0;
+  private ringOffset = new THREE.Vector3(SUMMIT_RING, 0, 0);
   private velocity = 0;
 
   private host: HTMLElement;
@@ -106,8 +109,10 @@ export class Engine {
       new Chamber(steam, origin(1), settings.points),
       new Chamber(silicon, origin(2), settings.points),
       new Chamber(genome, origin(3), settings.points),
-      new SketchChamber('intelligence', 'brain', origin(4), 6),
+      new Chamber(intelligence, origin(4), settings.points),
     ];
+    this.summit = new Summit(origin(ERAS.length));
+    this.floors.push(this.summit);
     for (const f of this.floors) this.scene.add(f.group);
     this.rig.setKeys(this.buildKeys());
 
@@ -118,6 +123,7 @@ export class Engine {
     this.ro.observe(host);
     this.resize();
     window.addEventListener('pointermove', this.onPointer, { passive: true });
+    window.addEventListener('pointerdown', this.onFire, { passive: true });
 
     if (new URLSearchParams(location.search).has('debug')) {
       this.debug = document.createElement('div');
@@ -164,10 +170,6 @@ export class Engine {
         keys.push({ p: a + k.t * (b - a), pos: v3(k.pos).add(o), look: v3(k.look).add(o) });
       }
     });
-    // the summit: out of the top collar into open dark
-    const [s0, s1] = BOUNDS[BOUNDS.length - 1];
-    keys.push({ p: s0 + (s1 - s0) * 0.3, pos: new THREE.Vector3(0, top + 2, 17), look: new THREE.Vector3(0, top + 4, 0) });
-    keys.push({ p: s1, pos: new THREE.Vector3(0, top + 4, 14), look: new THREE.Vector3(0, top + 4, 0) });
     return keys;
   }
 
@@ -204,6 +206,14 @@ export class Engine {
   private onPointer = (e: PointerEvent) => {
     if (e.pointerType !== 'mouse') return;
     this.pointer.set((e.clientX / window.innerWidth) * 2 - 1, (e.clientY / window.innerHeight) * 2 - 1);
+  };
+
+  // a click or tap on the network sends a thought up through it
+  private thinking = false;
+  private onFire = (e: PointerEvent) => {
+    if (!this.thinking) return;
+    if ((e.target as Element | null)?.closest('a,button,input,select,textarea,label,header,nav')) return;
+    shared.uFire.value = this.time;
   };
 
   private onLost = (e: Event) => {
@@ -243,9 +253,14 @@ export class Engine {
     const seg = at.segment;
     const era = seg.id !== 'dive' && seg.id !== 'summit';
     const b = beats(at.local);
+    const summit = seg.id === 'summit';
     world.set({
       segment: p < 0 ? -1 : at.index,
-      text: p >= 0 && p <= 1 && (era ? b.text : at.local > 0.08 && at.local < 0.92),
+      text:
+        p >= 0 &&
+        p <= 1 &&
+        (era ? b.text : summit ? at.local > 0.06 && at.local < 0.44 : at.local > 0.08 && at.local < 0.92),
+      landed: summit && at.local > 0.6,
     });
 
     // each floor's beats from its own slice of the journey; during the dive
@@ -261,8 +276,9 @@ export class Engine {
         if (f.group.visible) f.update(this.time, dt, { velocity: 0, built: 0 });
       } else {
         const fb = beats(t);
-        f.setBeats(fb);
-        f.group.visible = f.loaded && t > 0 && t < 1;
+        f.setBeats(fb, t);
+        // the summit holds its ring to the end of the journey
+        f.group.visible = f.loaded && t > 0 && (t < 1 || f === this.summit);
         if (f.group.visible) f.update(this.time, dt, { velocity: this.velocity, built: fb.cast });
       }
     });
@@ -298,6 +314,9 @@ export class Engine {
     // the lens has something to show once a machine is standing
     const current = era ? this.floors[SEGMENTS[at.index].floor] : null;
     const standing = !!current && b.cast > 0.6 && b.exit < 0.3;
+    // the network thinks on its own now and then, and on every click
+    this.thinking = standing && seg.id === 'intelligence';
+    if (this.thinking && this.time - shared.uFire.value > 7.5) shared.uFire.value = this.time;
     this.lens.setEnabled(standing);
     if (current) {
       this.tmp2.copy(current.group.position).add(this.tmp.set(0, 2, 0)).project(this.camera);
@@ -306,6 +325,15 @@ export class Engine {
     this.lens.update(dt, now, this.W, this.H, this.focus);
     this.lens.write(shared.uLens.value, this.H, this.dpr);
     this.post.setLens(shared.uLens.value);
+
+    // where the summit ring sits on screen, for the artwork laid over it
+    if (this.summit.group.visible || this.summit.logo > 0) {
+      const c = this.tmp2.copy(this.summit.group.position).project(this.camera);
+      const edge = this.tmp.copy(this.summit.group.position).add(this.ringOffset).project(this.camera);
+      const cx = (c.x * 0.5 + 0.5) * this.W, cy = (-c.y * 0.5 + 0.5) * this.H;
+      const ex = (edge.x * 0.5 + 0.5) * this.W, ey = (-edge.y * 0.5 + 0.5) * this.H;
+      world.setRing(cx, cy, Math.hypot(ex - cx, ey - cy), this.summit.group.visible ? this.summit.logo : 0);
+    }
 
     this.shaft.update(this.time);
     this.post.render(dt);
@@ -339,6 +367,7 @@ export class Engine {
     this.renderer.setAnimationLoop(null);
     this.ro.disconnect();
     window.removeEventListener('pointermove', this.onPointer);
+    window.removeEventListener('pointerdown', this.onFire);
     this.renderer.domElement.removeEventListener('webglcontextlost', this.onLost);
     this.lens.dispose();
     this.floors.forEach((f) => f.dispose());

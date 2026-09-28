@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import manifest from '../../data/logoLayers.json';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ERAS } from '../../data/eras';
 import { FEST } from '../../data/fest';
@@ -23,7 +24,7 @@ export function Journey() {
 
 function Pinned() {
   const ref = useRef<HTMLElement>(null);
-  const { segment, text, ready } = useWorld();
+  const { segment, text, ready, landed } = useWorld();
   const fine = useFinePointer();
 
   useEffect(() => {
@@ -54,6 +55,7 @@ function Pinned() {
       ))}
 
       <div className="pointer-events-none sticky top-0 z-10 h-svh overflow-hidden">
+        <SummitArtwork />
         <AnimatePresence mode="wait">
           {show && seg.id === 'dive' && (
             <Statement key="dive">
@@ -64,6 +66,22 @@ function Pinned() {
             <Statement key="summit">
               This time the tool <span className="text-brass-hi">reaches back.</span>
             </Statement>
+          )}
+          {landed && (
+            <motion.p
+              key="landed"
+              className="text-lift absolute inset-x-0 bottom-[9svh] px-4 text-center text-[1.05rem] text-stone-dim"
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1, ease: EXPO, delay: 0.3 }}
+            >
+              <span className="text-stone">Fri 23 – Sun 25 October</span>
+              <span className="mx-2 text-brass" aria-hidden>
+                /
+              </span>
+              {FEST.college}, {FEST.campus}
+            </motion.p>
           )}
           {show && era && (
             <motion.div
@@ -94,6 +112,11 @@ function Pinned() {
                         : 'Tap the machine to see it the way a machine does.'}
                     </p>
                   )}
+                  {era.id === 'intelligence' && ready && (
+                    <p className="text-lift mt-8 max-w-[34ch] text-[0.95rem] text-stone-mute">
+                      {fine ? 'Click anywhere to send a thought up through it.' : 'Tap to send a thought up through it.'}
+                    </p>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -121,6 +144,46 @@ function Pinned() {
         </ol>
       </div>
     </section>
+  );
+}
+
+const SIZE = manifest.size[0];
+const RING = manifest.ring;
+
+/**
+ * The official artwork, untouched, laid over the summit ring. The engine
+ * reports where the ring sits on screen every frame; this sizes and places
+ * the JPEG so its own ring lands exactly on the dots, then fades it in.
+ */
+function SummitArtwork() {
+  const img = useRef<HTMLImageElement>(null);
+  useEffect(
+    () =>
+      world.onRing(({ x, y, r, opacity }) => {
+        const el = img.current;
+        if (!el) return;
+        if (opacity <= 0.001 || r <= 0) {
+          el.style.opacity = '0';
+          return;
+        }
+        const w = (r * SIZE) / RING.r;
+        el.style.width = `${w}px`;
+        el.style.transform = `translate3d(${x - (w * RING.cx) / SIZE}px, ${y - (w * RING.cy) / SIZE}px, 0)`;
+        el.style.opacity = opacity.toFixed(3);
+      }),
+    [],
+  );
+  return (
+    <img
+      ref={img}
+      src="/logo/atmos-website.jpg"
+      alt="ATMOS ’26 official artwork: a human hand and a machine hand meeting inside a brass ring"
+      width={SIZE}
+      height={SIZE}
+      loading="lazy"
+      decoding="async"
+      className="absolute left-0 top-0 aspect-square max-w-none opacity-0 mix-blend-lighten"
+    />
   );
 }
 

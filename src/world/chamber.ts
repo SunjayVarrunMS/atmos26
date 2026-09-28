@@ -43,7 +43,8 @@ export interface Floor {
   readonly spec: Pick<ChamberSpec, 'id' | 'camera'>;
   loaded: boolean;
   load(loader: GLTFLoader): Promise<void>;
-  setBeats(b: Beats): void;
+  /** `t` is the floor's local progress, for floors that keep their own time */
+  setBeats(b: Beats, t?: number): void;
   update(time: number, dt: number, ctx: MotionContext): void;
   dispose(): void;
 }

@@ -15,9 +15,11 @@ export interface WorldView {
   tier: Tier | null;
   /** the first chamber is loaded and compiled */
   ready: boolean;
+  /** the official artwork has landed in the summit ring */
+  landed: boolean;
 }
 
-let view: WorldView = { segment: -1, text: false, tier: null, ready: false };
+let view: WorldView = { segment: -1, text: false, tier: null, ready: false, landed: false };
 const subs = new Set<() => void>();
 
 // the journey section, measured by the engine every frame
@@ -45,7 +47,29 @@ export const world = {
     journey = el;
   },
   journey: () => journey,
+  /** where the summit ring sits on screen (css px), for laying the artwork over it;
+   *  called every frame, so listeners write styles directly */
+  setRing(x: number, y: number, r: number, opacity: number) {
+    ring = { x, y, r, opacity };
+    ringSubs.forEach((s) => s(ring));
+  },
+  onRing(fn: (r: Ring) => void) {
+    ringSubs.add(fn);
+    fn(ring);
+    return () => {
+      ringSubs.delete(fn);
+    };
+  },
 };
+
+export interface Ring {
+  x: number;
+  y: number;
+  r: number;
+  opacity: number;
+}
+let ring: Ring = { x: 0, y: 0, r: 0, opacity: 0 };
+const ringSubs = new Set<(r: Ring) => void>();
 
 export const useWorld = () => useSyncExternalStore(world.subscribe, world.get, world.get);
 

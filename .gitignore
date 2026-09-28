@@ -38,3 +38,4 @@ design/logo/layers/
 
 # raw Blender exports (packed copies ship; see scripts/blender/world_chambers.py)
 public/world/*.raw.glb
+__pycache__/

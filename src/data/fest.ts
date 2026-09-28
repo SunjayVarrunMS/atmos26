@@ -27,6 +27,7 @@ export const CONTACT = {
   instagramHref: 'https://www.instagram.com/atmos_bitshyd/',
   address: 'BITS Pilani, Hyderabad Campus, Jawahar Nagar, Kapra Mandal, Medchal District, Telangana 500078',
   mapsHref: 'https://maps.google.com/?q=BITS+Pilani+Hyderabad+Campus',
+  mapsEmbed: 'https://www.google.com/maps?q=17.5449,78.5718&z=15&output=embed',
 } as const;
 
 // figures from previous editions

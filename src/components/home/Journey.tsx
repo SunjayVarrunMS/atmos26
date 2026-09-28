@@ -194,12 +194,23 @@ function Stack() {
         </h2>
         <ol className="mt-[10svh] border-t border-stone/12">
           {ERAS.map((e) => (
-            <li key={e.id} id={`ascent-${e.id}`} className="grid gap-3 border-b border-stone/12 py-6 md:grid-cols-12 md:py-8">
-              <p className="stencil text-[clamp(1.3rem,2vw,1.8rem)] text-brass md:col-span-2" style={{ textTransform: 'none' }}>
-                {e.when}
-              </p>
-              <h3 className="display text-[clamp(1.9rem,3.4vw,3rem)] text-stone md:col-span-4">{e.name}</h3>
-              <p className="max-w-[44ch] text-[1.05rem] leading-relaxed text-stone-dim md:col-span-6">{e.line}</p>
+            <li key={e.id} id={`ascent-${e.id}`} className="grid items-center gap-6 border-b border-stone/12 py-8 md:grid-cols-12 md:gap-8 md:py-10">
+              <img
+                src={`/world/stills/${e.id}.webp`}
+                alt={e.scene}
+                width={1280}
+                height={800}
+                loading="lazy"
+                decoding="async"
+                className="aspect-[16/10] w-full bg-soot object-cover md:col-span-7"
+              />
+              <div className="md:col-span-5">
+                <p className="stencil text-[clamp(1.3rem,2vw,1.8rem)] text-brass" style={{ textTransform: 'none' }}>
+                  {e.when}
+                </p>
+                <h3 className="display mt-2 text-[clamp(1.9rem,3.4vw,3rem)] text-stone">{e.name}</h3>
+                <p className="mt-4 max-w-[40ch] text-[1.05rem] leading-relaxed text-stone-dim">{e.line}</p>
+              </div>
             </li>
           ))}
         </ol>

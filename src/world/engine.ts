@@ -63,6 +63,7 @@ export class Engine {
   private tmp = new THREE.Vector3();
   private tmp2 = new THREE.Vector3();
   private lastP = 0;
+  private capture = new URLSearchParams(location.search).has('capture');
   private wasLanded = false;
   private ringOffset = new THREE.Vector3(SUMMIT_RING, 0, 0);
   private velocity = 0;
@@ -293,8 +294,9 @@ export class Engine {
     this.rig.update(pc, dt, 0.16);
     const wide = this.W >= 900 && this.W / this.H >= 1;
     const tall = this.W / this.H < 0.9;
-    const wantX = era && wide ? 0.16 : 0;
-    const wantY = era && tall ? 0.2 : 0;
+    // capture mode (for the rendered stills) keeps every machine centred
+    const wantX = era && wide && !this.capture ? 0.16 : 0;
+    const wantY = era && tall && !this.capture ? 0.2 : 0;
     const k = 1 - Math.exp(-dt * 3);
     if (Math.abs(wantX - this.shiftX) > 1e-4 || Math.abs(wantY - this.shiftY) > 1e-4) {
       this.shiftX += (wantX - this.shiftX) * k;

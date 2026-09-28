@@ -24,6 +24,10 @@ type LiveTier = Exclude<Tier, 'still'>;
 
 const v3 = (a: [number, number, number]) => new THREE.Vector3(...a);
 const GLIMPSE: Beats = { arrive: 1, draw: 0, cast: 0, exit: 0, text: false };
+const FOG = 0.027;
+// how far the camera may stand from what it looks at before it would pass the
+// shaft's columns; past this a tall screen widens the lens instead
+const REACH = 23;
 
 /**
  * The ascent's renderer: one WebGL canvas fixed behind the home page. It reads
@@ -68,6 +72,11 @@ export class Engine {
   private wasLanded = false;
   private ringOffset = new THREE.Vector3(SUMMIT_RING, 0, 0);
   private velocity = 0;
+  private fog = new THREE.FogExp2(0x000000, FOG);
+  /** widening of the lens on tall screens, once the camera can't step back further */
+  private widen = 1;
+  /** how far a tall screen stands back: more for the machines than the dive and summit */
+  private stand = 0.22;
 
   private host: HTMLElement;
   private tier: LiveTier;
@@ -96,7 +105,7 @@ export class Engine {
 
     this.envRT = makeEnvironment(this.renderer);
     this.scene.environment = this.envRT.texture;
-    this.scene.fog = new THREE.FogExp2(0x000000, 0.027);
+    this.scene.fog = this.fog;
 
     this.scene.add(this.key, this.key.target, this.rim, this.rim.target);
 
@@ -213,7 +222,8 @@ export class Engine {
     const aspect = W / H;
     const portrait = aspect < 1;
     const t = THREE.MathUtils.clamp((1 - aspect) / 0.55, 0, 1);
-    this.camera.fov = portrait ? THREE.MathUtils.lerp(34, 52, t) : 34;
+    const fov = portrait ? THREE.MathUtils.lerp(34, 52, t) : 34;
+    this.camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(fov / 2)) * this.widen));
     const fullW = W * (1 + 2 * this.shiftX);
     const fullH = H * (1 + 2 * this.shiftY);
     this.camera.aspect = fullW / fullH;
@@ -314,15 +324,24 @@ export class Engine {
     // capture mode (for the rendered stills) keeps every machine centred
     const wantX = era && wide && !this.capture ? 0.16 : 0;
     const wantY = era && tall && !this.capture ? 0.2 : 0;
-    const k = 1 - Math.exp(-dt * 3);
-    if (Math.abs(wantX - this.shiftX) > 1e-4 || Math.abs(wantY - this.shiftY) > 1e-4) {
-      this.shiftX += (wantX - this.shiftX) * k;
-      this.shiftY += (wantY - this.shiftY) * k;
-      this.applyView();
-    }
     const floorPortrait = (current?.spec.portrait ?? 1) - 1;
     this.portrait += (floorPortrait - this.portrait) * (1 - Math.exp(-dt * 2));
-    const dolly = tall ? (1 + 0.22 * THREE.MathUtils.clamp((1 - this.W / this.H) / 0.55, 0, 1)) * (1 + this.portrait) : 1;
+    this.stand += ((era ? 0.75 : 0.22) - this.stand) * (1 - Math.exp(-dt * 2));
+    // a phone is a narrow window on a machine framed for a wide one: stand
+    // back until it fits across, then widen the lens for what's left
+    const zoom = tall ? (1 + this.stand * THREE.MathUtils.clamp((1 - this.W / this.H) / 0.55, 0, 1)) * (1 + this.portrait) : 1;
+    const dist = this.rig.pos.distanceTo(this.rig.look);
+    const dolly = Math.min(zoom, Math.max(1, REACH / Math.max(1e-3, dist)));
+    const widen = zoom / dolly;
+    // fog thins as the camera steps back, so the machine keeps its light
+    this.fog.density = FOG / dolly;
+    const k = 1 - Math.exp(-dt * 3);
+    if (Math.abs(wantX - this.shiftX) > 1e-4 || Math.abs(wantY - this.shiftY) > 1e-4 || Math.abs(widen - this.widen) > 1e-4) {
+      this.shiftX += (wantX - this.shiftX) * k;
+      this.shiftY += (wantY - this.shiftY) * k;
+      this.widen = widen;
+      this.applyView();
+    }
     this.parallax.lerp(this.pointer, 1 - Math.exp(-dt * 2.5));
     this.tmp.subVectors(this.rig.pos, this.rig.look).multiplyScalar(dolly).add(this.rig.look);
     this.camera.position.copy(this.tmp);

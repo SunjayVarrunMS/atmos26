@@ -4,8 +4,9 @@ import * as THREE from 'three';
  * The loupe the visitor looks through. With a mouse it rides the pointer
  * (trailing slightly, like the reticle it replaces) whenever the pointer is
  * over the world rather than over a control. On touch it opens where you tap
- * and closes on its own, and it drifts across the machine by itself while the
- * machine is on show, so phone visitors see what it does without being told.
+ * and closes on its own, and once a machine is standing it drifts across it
+ * for a few seconds by itself, so phone visitors learn what it does without
+ * being told, then leaves the machine to be seen whole.
  */
 export class Lens {
   /** css px, y down */
@@ -15,6 +16,7 @@ export class Lens {
   private want = false;
   private tapUntil = 0;
   private lastTouch = -1e9;
+  private shownAt = -1e9;
   private fine: boolean;
   private enabled = false;
   private rect: DOMRect | null = null;
@@ -58,6 +60,7 @@ export class Lens {
 
   /** the world is on screen and the machine is built (lens has something to show) */
   setEnabled(on: boolean) {
+    if (on && !this.enabled) this.shownAt = performance.now();
     this.enabled = on;
   }
 
@@ -75,7 +78,7 @@ export class Lens {
       open = this.want && this.enabled && inside;
     } else if (this.enabled) {
       if (now < this.tapUntil) open = inside;
-      else if (now - this.lastTouch > 2500) {
+      else if (now - this.lastTouch > 2500 && now - this.shownAt > 1200 && now - this.shownAt < 5600) {
         // idle drift: a slow figure-of-eight over the machine
         const t = now / 1000;
         this.target.set(

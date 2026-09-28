@@ -4,12 +4,17 @@ import { AnimatePresence } from 'framer-motion';
 import { NAV } from '../data/fest';
 import { useLenis } from '../components/SmoothScroll';
 import { MobileMenu } from './MobileMenu';
+import { SoundToggle } from './SoundToggle';
+import { useWorld } from '../world/store';
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const lenis = useLenis();
   const { pathname } = useLocation();
+  const { tier } = useWorld();
+  // sound belongs to the ascent, so it is offered where the world is live
+  const audible = pathname === '/' && tier !== null && tier !== 'still';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -71,6 +76,7 @@ export function Nav() {
           </nav>
 
           <div className="flex items-center gap-3">
+            {audible && <SoundToggle />}
             <button
               type="button"
               onClick={() => setOpen(true)}

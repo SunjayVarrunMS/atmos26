@@ -15,6 +15,7 @@ import { shared } from './materials';
 import { Post } from './post';
 import { LOWER, TIERS, type Tier } from './quality';
 import { Rig, type Key } from './rig';
+import { sound } from './sound';
 import { Shaft } from './shaft';
 import { journeyProgress, world } from './store';
 import { beats, BOUNDS, FLOOR, locate, SEGMENTS, smooth, type Beats } from './timeline';
@@ -62,6 +63,7 @@ export class Engine {
   private tmp = new THREE.Vector3();
   private tmp2 = new THREE.Vector3();
   private lastP = 0;
+  private wasLanded = false;
   private ringOffset = new THREE.Vector3(SUMMIT_RING, 0, 0);
   private velocity = 0;
 
@@ -130,6 +132,7 @@ export class Engine {
       this.debug.style.cssText =
         'position:fixed;left:8px;bottom:8px;z-index:200;font:12px/1.4 ui-monospace,monospace;color:#7ff6ff;background:#000c;padding:6px 8px;pointer-events:none;white-space:pre';
       document.body.appendChild(this.debug);
+      (window as unknown as { __sound: typeof sound }).__sound = sound;
     }
 
     this.boot();
@@ -214,6 +217,7 @@ export class Engine {
     if (!this.thinking) return;
     if ((e.target as Element | null)?.closest('a,button,input,select,textarea,label,header,nav')) return;
     shared.uFire.value = this.time;
+    sound.event('fire');
   };
 
   private onLost = (e: Event) => {
@@ -262,6 +266,8 @@ export class Engine {
         (era ? b.text : summit ? at.local > 0.06 && at.local < 0.44 : at.local > 0.08 && at.local < 0.92),
       landed: summit && at.local > 0.6,
     });
+    if (world.get().landed && !this.wasLanded) sound.event('land');
+    this.wasLanded = world.get().landed;
 
     // each floor's beats from its own slice of the journey; during the dive
     // the eras above the first are glimpsed as dust while you fall past them
@@ -316,7 +322,10 @@ export class Engine {
     const standing = !!current && b.cast > 0.6 && b.exit < 0.3;
     // the network thinks on its own now and then, and on every click
     this.thinking = standing && seg.id === 'intelligence';
-    if (this.thinking && this.time - shared.uFire.value > 7.5) shared.uFire.value = this.time;
+    if (this.thinking && this.time - shared.uFire.value > 7.5) {
+      shared.uFire.value = this.time;
+      sound.event('fire');
+    }
     this.lens.setEnabled(standing);
     if (current) {
       this.tmp2.copy(current.group.position).add(this.tmp.set(0, 2, 0)).project(this.camera);
@@ -335,10 +344,30 @@ export class Engine {
       world.setRing(cx, cy, Math.hypot(ex - cx, ey - cy), this.summit.group.visible ? this.summit.logo : 0);
     }
 
+    this.voice(pc, fade);
     this.shaft.update(this.time);
     this.post.render(dt);
     this.govern(dt);
   };
+
+  // each floor is heard while it is on stage
+  private voice(pc: number, fade: number) {
+    if (!sound.enabled) return;
+    const layers: Record<string, number> = {};
+    this.floors.forEach((f, i) => {
+      const [a, b] = BOUNDS[i + 1];
+      const t = THREE.MathUtils.clamp((pc - a) / (b - a), 0, 1);
+      layers[f.spec.id] = f === this.summit ? smooth(0.3, 0.6, t) : smooth(0.05, 0.22, t) * (1 - smooth(0.86, 1, t));
+    });
+    const steamRig = (this.floors[1] as Chamber).root?.userData.rig as { angle: number; speed: number } | undefined;
+    sound.update({
+      presence: fade,
+      progress: pc,
+      layers,
+      steamAngle: steamRig?.angle ?? 0,
+      steamSpeed: steamRig?.speed ?? 0,
+    });
+  }
 
   // step down a tier if the device can't hold the frame rate
   private govern(dt: number) {

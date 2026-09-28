@@ -1,5 +1,6 @@
 import type * as THREE from 'three';
 import type { ChamberSpec } from '../chamber';
+import { sound } from '../sound';
 
 /**
  * 2000s. The 1953 model, grown to the height of a room. The helix turns
@@ -60,6 +61,7 @@ export const genome: ChamberSpec = {
       r.current = (r.current + 1) % r.pairs.length;
       r.started = time;
       r.landed = -1;
+      sound.event('flip');
     }
     const k = Math.min(1, (time - r.started) / FLIP);
     r.pairs.forEach((p, i) => {

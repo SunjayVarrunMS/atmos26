@@ -74,7 +74,9 @@ function Pinned() {
               exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
               transition={{ duration: 0.8, ease: EXPO }}
             >
-              <div className="mx-auto w-full max-w-[1440px]">
+              {/* phones: the copy sits under the machine, so it gets a dark floor to stand on */}
+              <div aria-hidden className="absolute inset-x-0 bottom-0 h-[62svh] bg-linear-to-t from-void via-void/80 to-transparent md:hidden" />
+              <div className="relative mx-auto w-full max-w-[1440px]">
                 <div className="max-w-[30rem] md:max-w-[38%]">
                   <p className="stencil text-[clamp(1.4rem,2.2vw,2rem)] text-brass" style={{ textTransform: 'none' }}>
                     {era.when}

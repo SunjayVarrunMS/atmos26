@@ -68,6 +68,9 @@ MATS = {
     "iron": dict(color=(0.035, 0.034, 0.032), metal=0.55, rough=0.58),
     "steel": dict(color=(0.62, 0.62, 0.64), metal=1.0, rough=0.2),
     "rope": dict(color=(0.30, 0.22, 0.14), metal=0.0, rough=0.9),
+    "enamel": dict(color=(0.012, 0.018, 0.015), metal=0.0, rough=0.22),
+    "copper": dict(color=(0.75, 0.38, 0.22), metal=1.0, rough=0.3),
+    "wood": dict(color=(0.16, 0.1, 0.06), metal=0.0, rough=0.8),
 }
 
 
@@ -275,9 +278,10 @@ def weld(ob, dist=1e-5):
     bm.free()
 
 
-def lathe(name, profile, mat, parent=None, loc=(0, 0, 0), segs=48, axis="Y", smooth_angle=40):
+def lathe(name, profile, mat, parent=None, loc=(0, 0, 0), segs=48, axis="Y", smooth_angle=40, closed=False):
     """Revolve a (radius, height) profile around an axis: arbors, collars,
-    pillars, the pendulum bob."""
+    pillars, the pendulum bob. `closed` joins the last point back to the first
+    (a ring section, e.g. a tyre) instead of capping the ends."""
     bm = bmesh.new()
     rings = []
     for (r, h) in profile:
@@ -292,21 +296,24 @@ def lathe(name, profile, mat, parent=None, loc=(0, 0, 0), segs=48, axis="Y", smo
                 co = (h, r * math.cos(a), r * math.sin(a))
             ring.append(bm.verts.new(co))
         rings.append(ring)
-    for j in range(len(rings) - 1):
+    spans = len(rings) if closed else len(rings) - 1
+    for j in range(spans):
+        nxt = rings[(j + 1) % len(rings)]
         for i in range(segs):
             a, b = rings[j][i], rings[j][(i + 1) % segs]
-            c, d = rings[j + 1][(i + 1) % segs], rings[j + 1][i]
+            c, d = nxt[(i + 1) % segs], nxt[i]
             try:
                 bm.faces.new((a, b, c, d))
             except ValueError:
                 pass
     # caps where the profile starts/ends off-axis
-    for ring in (rings[0], rings[-1]):
-        if len(ring) > 2:
-            try:
-                bm.faces.new(ring)
-            except ValueError:
-                pass
+    if not closed:
+        for ring in (rings[0], rings[-1]):
+            if len(ring) > 2:
+                try:
+                    bm.faces.new(ring)
+                except ValueError:
+                    pass
     bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-6)
     bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
     return mesh_obj(name, bm, mat, parent, loc, smooth_angle)

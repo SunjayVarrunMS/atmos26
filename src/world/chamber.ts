@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import type { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 import { MeshSurfaceSampler } from 'three/addons/math/MeshSurfaceSampler.js';
 import { chamberUniforms, makeLines, makePoints, makeSurface, type ChamberUniforms } from './materials';
 import type { Beats } from './timeline';
@@ -11,6 +12,14 @@ export interface CameraKey {
   look: [number, number, number];
 }
 
+/** what a running machine gets to know each frame */
+export interface MotionContext {
+  /** scroll speed, journey progress per second (signed) */
+  velocity: number;
+  /** 0..1, how built the machine is (motion can wait for the metal) */
+  built: number;
+}
+
 export interface ChamberSpec {
   id: string;
   /** packed GLB in /public/world */
@@ -18,7 +27,7 @@ export interface ChamberSpec {
   /** camera path through the chamber, relative to its origin */
   camera: CameraKey[];
   /** per-frame motion (the machine running) */
-  animate?: (root: THREE.Object3D, time: number, dt: number) => void;
+  animate?: (root: THREE.Object3D, time: number, dt: number, ctx: MotionContext) => void;
   /** vertical extent used for the pour order; defaults to the model bounds */
   span?: [number, number];
 }
@@ -31,11 +40,9 @@ export interface Floor {
   loaded: boolean;
   load(loader: GLTFLoader): Promise<void>;
   setBeats(b: Beats): void;
-  update(time: number, dt: number): void;
+  update(time: number, dt: number, ctx: MotionContext): void;
   dispose(): void;
 }
-
-const PIVOTS = new Set(['arbor', 'anchor', 'pendulum', 'spin']);
 
 // hand the main thread back between heavy steps
 const idle = () =>
@@ -43,24 +50,39 @@ const idle = () =>
     'requestIdleCallback' in window ? requestIdleCallback(() => r(), { timeout: 120 }) : setTimeout(r, 16),
   );
 
+// a node that moves on its own (anything Blender tagged with a role other than
+// "static") carries the parts beneath it
+const isCarrier = (o: THREE.Object3D) => typeof o.userData.role === 'string' && o.userData.role !== 'static';
+// rotating carriers: their parts are drawn by compass
+const COMPASS = new Set(['arbor', 'anchor', 'pendulum', 'wheel', 'link']);
+
+interface Part {
+  mesh: THREE.Mesh;
+  carrier: THREE.Object3D;
+  /** mesh space → carrier space */
+  toCarrier: THREE.Matrix4;
+  area: number;
+}
+
 /**
  * One floor of the shaft: a Blender model with its three states (surface,
  * blueprint lines, machine-view points), driven by the timeline's beats.
+ * Parts that move together are merged into one mesh per material, with their
+ * lines and points merged alongside, so a floor costs a few dozen draws.
  */
 export class Chamber implements Floor {
   readonly group = new THREE.Group();
   readonly u: ChamberUniforms = chamberUniforms();
   root: THREE.Object3D | null = null;
   loaded = false;
+  readonly spec: ChamberSpec;
+  readonly origin: THREE.Vector3;
+  private pointBudget: number;
   private loading: Promise<void> | null = null;
   private surfaces = new Map<string, THREE.MeshStandardMaterial>();
   private lineMat = makeLines(this.u);
   private pointMat: THREE.ShaderMaterial;
   private disposables: { dispose(): void }[] = [];
-
-  readonly spec: ChamberSpec;
-  readonly origin: THREE.Vector3;
-  private pointBudget: number;
 
   constructor(spec: ChamberSpec, origin: THREE.Vector3, pointBudget: number) {
     this.spec = spec;
@@ -78,39 +100,83 @@ export class Chamber implements Floor {
     return this.loading;
   }
 
+  private surface(name: string) {
+    let mat = this.surfaces.get(name);
+    if (!mat) {
+      mat = makeSurface(name, this.u);
+      this.surfaces.set(name, mat);
+    }
+    return mat;
+  }
+
   private async build(loader: GLTFLoader) {
     const gltf = await loader.loadAsync(this.spec.url);
     const root = gltf.scene;
     this.root = root;
     root.updateMatrixWorld(true);
 
-    const meshes: THREE.Mesh[] = [];
-    root.traverse((o) => {
-      if ((o as THREE.Mesh).isMesh) meshes.push(o as THREE.Mesh);
-    });
-
-    // swap Blender's materials for ours, by name
-    for (const m of meshes) {
-      const src = m.material as THREE.Material;
-      let mat = this.surfaces.get(src.name);
-      if (!mat) {
-        mat = makeSurface(src.name, this.u);
-        this.surfaces.set(src.name, mat);
-      }
-      src.dispose();
-      m.material = mat;
-      m.frustumCulled = true;
-    }
-
     // chamber-local bounds for the pour order
     const box = new THREE.Box3().setFromObject(root);
     const [y0, y1] = this.spec.span ?? [box.min.y, box.max.y];
     this.u.uSpan.value.set(y0, y1);
 
+    const parts: Part[] = [];
+    root.traverse((o) => {
+      const mesh = o as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      let carrier: THREE.Object3D = mesh.parent ?? root;
+      while (carrier !== root && !isCarrier(carrier)) carrier = carrier.parent ?? root;
+      const toCarrier = new THREE.Matrix4().copy(carrier.matrixWorld).invert().multiply(mesh.matrixWorld);
+      parts.push({ mesh, carrier, toCarrier, area: surfaceArea(mesh) });
+    });
+
     await idle();
-    this.buildLines(meshes, y0, y1);
+    const lines = this.buildLines(parts, root, y0, y1);
     await idle();
-    this.buildPoints(meshes);
+    const points = this.buildPoints(parts);
+    await idle();
+
+    // merge surfaces per carrier and material
+    const surfaceGroups = new Map<THREE.Object3D, Map<string, THREE.BufferGeometry[]>>();
+    for (const p of parts) {
+      const name = (p.mesh.material as THREE.Material).name;
+      const geo = floatClone(p.mesh.geometry, ['position', 'normal', 'color']).applyMatrix4(p.toCarrier);
+      let byMat = surfaceGroups.get(p.carrier);
+      if (!byMat) surfaceGroups.set(p.carrier, (byMat = new Map()));
+      const list = byMat.get(name) ?? [];
+      list.push(geo);
+      byMat.set(name, list);
+    }
+    for (const p of parts) {
+      (p.mesh.material as THREE.Material).dispose();
+      p.mesh.geometry.dispose();
+      p.mesh.removeFromParent();
+    }
+    for (const [carrier, byMat] of surfaceGroups) {
+      for (const [name, list] of byMat) {
+        const merged = mergeGeometries(list, false);
+        list.forEach((g) => g.dispose());
+        if (!merged) continue;
+        const mesh = new THREE.Mesh(merged, this.surface(name));
+        mesh.name = `${carrier.name}:${name}`;
+        carrier.add(mesh);
+        this.disposables.push(merged);
+      }
+    }
+    for (const [carrier, geo] of lines) {
+      const ls = new THREE.LineSegments(geo, this.lineMat);
+      ls.frustumCulled = false;
+      ls.renderOrder = 2;
+      carrier.add(ls);
+      this.disposables.push(geo);
+    }
+    for (const [carrier, geo] of points) {
+      const pts = new THREE.Points(geo, this.pointMat);
+      pts.frustumCulled = false;
+      pts.renderOrder = 3;
+      carrier.add(pts);
+      this.disposables.push(geo);
+    }
 
     this.group.add(root);
     this.loaded = true;
@@ -118,34 +184,29 @@ export class Chamber implements Floor {
 
   /** Blueprint: hard edges of every part, ordered so each part is drawn like
    *  a draughtsman would: round parts swept by a compass, the rest along
-   *  their length, lower parts first. */
-  private buildLines(meshes: THREE.Mesh[], y0: number, y1: number) {
-    const inv = new THREE.Matrix4();
-    const toPivot = new THREE.Matrix4();
+   *  their length, lower parts first. Merged per carrier. */
+  private buildLines(parts: Part[], root: THREE.Object3D, y0: number, y1: number) {
+    const out = new Map<THREE.Object3D, THREE.BufferGeometry[]>();
     const v = new THREE.Vector3();
     const centre = new THREE.Vector3();
-    const rootInv = new THREE.Matrix4().copy(this.root!.matrixWorld).invert();
+    const rootInv = new THREE.Matrix4().copy(root.matrixWorld).invert();
 
-    for (const mesh of meshes) {
+    for (const { mesh, carrier, toCarrier } of parts) {
       const edges = new THREE.EdgesGeometry(mesh.geometry, 26);
       const pos = edges.getAttribute('position') as THREE.BufferAttribute;
       if (pos.count < 2) {
         edges.dispose();
         continue;
       }
+      edges.applyMatrix4(toCarrier);
       const order = new Float32Array(pos.count);
 
-      // which moving node carries this part (its axis is the compass point)
-      let pivot: THREE.Object3D | null = mesh.parent;
-      while (pivot && !PIVOTS.has(pivot.userData.role)) pivot = pivot.parent;
-      const frame = pivot ?? mesh;
-      toPivot.copy(inv.copy(frame.matrixWorld).invert()).multiply(mesh.matrixWorld);
-
-      // part bounds in its pivot frame
-      const bb = new THREE.Box3();
-      for (let i = 0; i < pos.count; i++) bb.expandByPoint(v.fromBufferAttribute(pos, i).applyMatrix4(toPivot));
+      const bb = new THREE.Box3().setFromBufferAttribute(pos);
       const size = bb.getSize(new THREE.Vector3());
-      const round = !!pivot && Math.abs(size.x - size.y) / Math.max(size.x, size.y, 1e-3) < 0.2 && Math.max(size.x, size.y) > 0.25;
+      const compass =
+        COMPASS.has(carrier.userData.role) &&
+        Math.abs(size.x - size.y) / Math.max(size.x, size.y, 1e-3) < 0.25 &&
+        Math.max(size.x, size.y) > 0.25;
       const axis = size.x >= size.y ? (size.x >= size.z ? 0 : 2) : size.y >= size.z ? 1 : 2;
 
       // lower parts start first; each part takes 40% of the drawing time
@@ -155,53 +216,54 @@ export class Chamber implements Floor {
       const start = h * 0.6;
 
       for (let i = 0; i < pos.count; i++) {
-        v.fromBufferAttribute(pos, i).applyMatrix4(toPivot);
-        let local: number;
-        if (round) local = (Math.atan2(v.y, v.x) / (Math.PI * 2) + 1) % 1;
-        else local = (v.getComponent(axis) - bb.min.getComponent(axis)) / Math.max(1e-4, size.getComponent(axis));
+        v.fromBufferAttribute(pos, i);
+        const local = compass
+          ? (Math.atan2(v.y, v.x) / (Math.PI * 2) + 1) % 1
+          : (v.getComponent(axis) - bb.min.getComponent(axis)) / Math.max(1e-4, size.getComponent(axis));
         order[i] = start + local * 0.4;
       }
       edges.setAttribute('aOrder', new THREE.BufferAttribute(order, 1));
-      const lines = new THREE.LineSegments(edges, this.lineMat);
-      lines.frustumCulled = false;
-      lines.renderOrder = 2;
-      mesh.add(lines);
-      this.disposables.push(edges);
+      const list = out.get(carrier) ?? [];
+      list.push(edges);
+      out.set(carrier, list);
     }
+
+    const merged = new Map<THREE.Object3D, THREE.BufferGeometry>();
+    for (const [carrier, list] of out) {
+      const g = mergeGeometries(list, false);
+      list.forEach((e) => e.dispose());
+      if (g) merged.set(carrier, g);
+    }
+    return merged;
   }
 
   /** Machine view: surface samples of every part, weighted by area, riding
-   *  on the parts so they turn with the machine. */
-  private buildPoints(meshes: THREE.Mesh[]) {
-    const areas = meshes.map((m) => surfaceArea(m));
-    const total = areas.reduce((a, b) => a + b, 0) || 1;
+   *  on their carrier so they turn with the machine. */
+  private buildPoints(parts: Part[]) {
+    const total = parts.reduce((a, p) => a + p.area, 0) || 1;
+    const byCarrier = new Map<THREE.Object3D, { pos: number[]; rand: number[] }>();
     const p = new THREE.Vector3();
-    for (let k = 0; k < meshes.length; k++) {
-      const mesh = meshes[k];
-      const n = Math.round((areas[k] / total) * this.pointBudget);
-      if (n < 8) continue;
-      const sampler = new MeshSurfaceSampler(mesh).build();
-      const pos = new Float32Array(n * 3);
-      const rand = new Float32Array(n * 4);
+    for (const part of parts) {
+      const n = Math.round((part.area / total) * this.pointBudget);
+      if (n < 4) continue;
+      const sampler = new MeshSurfaceSampler(part.mesh).build();
+      let bucket = byCarrier.get(part.carrier);
+      if (!bucket) byCarrier.set(part.carrier, (bucket = { pos: [], rand: [] }));
       for (let i = 0; i < n; i++) {
         sampler.sample(p);
-        pos[i * 3] = p.x;
-        pos[i * 3 + 1] = p.y;
-        pos[i * 3 + 2] = p.z;
-        rand[i * 4] = Math.random();
-        rand[i * 4 + 1] = Math.random();
-        rand[i * 4 + 2] = Math.random();
-        rand[i * 4 + 3] = Math.random();
+        p.applyMatrix4(part.toCarrier);
+        bucket.pos.push(p.x, p.y, p.z);
+        bucket.rand.push(Math.random(), Math.random(), Math.random(), Math.random());
       }
-      const geo = new THREE.BufferGeometry();
-      geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-      geo.setAttribute('aRand', new THREE.BufferAttribute(rand, 4));
-      const pts = new THREE.Points(geo, this.pointMat);
-      pts.frustumCulled = false;
-      pts.renderOrder = 3;
-      mesh.add(pts);
-      this.disposables.push(geo);
     }
+    const out = new Map<THREE.Object3D, THREE.BufferGeometry>();
+    for (const [carrier, b] of byCarrier) {
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(b.pos, 3));
+      geo.setAttribute('aRand', new THREE.Float32BufferAttribute(b.rand, 4));
+      out.set(carrier, geo);
+    }
+    return out;
   }
 
   setBeats(b: Beats) {
@@ -209,13 +271,13 @@ export class Chamber implements Floor {
     this.u.uDraw.value = b.draw;
     this.u.uCast.value = b.cast;
     this.u.uExit.value = b.exit;
-    // dots show while the machine is only perceived: before the metal pours
-    // and again as it leaves
+    // dots show while the machine is only perceived: before it is drawn and
+    // again as it leaves
     this.u.uSee.value = Math.max(1 - b.draw, b.exit);
   }
 
-  update(time: number, dt: number) {
-    if (this.root && this.spec.animate) this.spec.animate(this.root, time, dt);
+  update(time: number, dt: number, ctx: MotionContext) {
+    if (this.root && this.spec.animate) this.spec.animate(this.root, time, dt, ctx);
   }
 
   dispose() {
@@ -223,10 +285,34 @@ export class Chamber implements Floor {
     this.surfaces.forEach((m) => m.dispose());
     this.lineMat.dispose();
     this.pointMat.dispose();
-    this.root?.traverse((o) => {
-      if ((o as THREE.Mesh).isMesh) (o as THREE.Mesh).geometry.dispose();
-    });
   }
+}
+
+/** a de-quantised, float copy of the listed attributes (meshopt ships int16) */
+function floatClone(src: THREE.BufferGeometry, names: string[]) {
+  const g = new THREE.BufferGeometry();
+  const count = src.getAttribute('position').count;
+  for (const name of names) {
+    const a = src.getAttribute(name) as THREE.BufferAttribute | undefined;
+    if (!a) {
+      // parts without baked AO read as unoccluded
+      if (name === 'color') g.setAttribute('color', new THREE.BufferAttribute(new Float32Array(count * 4).fill(1), 4));
+      continue;
+    }
+    const size = name === 'color' ? 4 : a.itemSize;
+    const out = new Float32Array(a.count * size);
+    for (let i = 0; i < a.count; i++) {
+      out[i * size] = a.getX(i);
+      if (size > 1) out[i * size + 1] = a.getY(i);
+      if (size > 2) out[i * size + 2] = a.getZ(i);
+      if (size > 3) out[i * size + 3] = a.itemSize > 3 ? a.getW(i) : 1;
+    }
+    g.setAttribute(name, new THREE.BufferAttribute(out, size));
+  }
+  // always indexed, so every part of a carrier can merge
+  const index = src.index ? new Uint32Array(src.index.array as ArrayLike<number>) : Uint32Array.from({ length: count }, (_, i) => i);
+  g.setIndex(new THREE.BufferAttribute(index, 1));
+  return g;
 }
 
 function surfaceArea(mesh: THREE.Mesh) {

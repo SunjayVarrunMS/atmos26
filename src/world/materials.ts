@@ -89,6 +89,10 @@ const METALS: Record<string, THREE.MeshStandardMaterialParameters & { ao?: numbe
   iron: { color: '#2b2926', metalness: 0.7, roughness: 0.58, envMapIntensity: 0.8 },
   steel: { color: '#c3c7cc', metalness: 1, roughness: 0.2, envMapIntensity: 1.0 },
   rope: { color: '#6b5238', metalness: 0, roughness: 0.92, envMapIntensity: 0.4 },
+  // locomotive lacquer: near-black green, glossy, so the skylight runs along it
+  enamel: { color: '#0b120f', metalness: 0.0, roughness: 0.2, envMapIntensity: 1.25 },
+  copper: { color: '#c7784c', metalness: 1, roughness: 0.3, envMapIntensity: 1.0 },
+  wood: { color: '#3a2618', metalness: 0, roughness: 0.85, envMapIntensity: 0.3 },
 };
 
 export const MOLTEN = new THREE.Color(4.0, 2.0, 0.7);

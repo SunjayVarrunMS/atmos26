@@ -4,6 +4,7 @@ import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 import { ERAS } from '../data/eras';
 import { Chamber, type Floor } from './chamber';
 import { clockwork } from './chambers/clockwork';
+import { steam } from './chambers/steam';
 import { SketchChamber } from './chambers/sketch';
 import { makeEnvironment } from './env';
 import { Lens } from './lens';
@@ -56,6 +57,8 @@ export class Engine {
   private debug: HTMLElement | null = null;
   private tmp = new THREE.Vector3();
   private tmp2 = new THREE.Vector3();
+  private lastP = 0;
+  private velocity = 0;
 
   private host: HTMLElement;
   private tier: LiveTier;
@@ -98,7 +101,7 @@ export class Engine {
     const origin = (i: number) => new THREE.Vector3(0, i * FLOOR, 0);
     this.floors = [
       new Chamber(clockwork, origin(0), settings.points),
-      new SketchChamber('steam', 'locomotive', origin(1)),
+      new Chamber(steam, origin(1), settings.points),
       new SketchChamber('silicon', 'city', origin(2), 7.5),
       new SketchChamber('genome', 'dna', origin(3), 7),
       new SketchChamber('intelligence', 'brain', origin(4), 6),
@@ -231,6 +234,9 @@ export class Engine {
     }
 
     const pc = THREE.MathUtils.clamp(p, 0, 1);
+    // scroll speed, smoothed: some machines run on it
+    if (dt > 0) this.velocity += ((pc - this.lastP) / dt - this.velocity) * (1 - Math.exp(-dt * 6));
+    this.lastP = pc;
     const at = locate(pc);
     const seg = at.segment;
     const era = seg.id !== 'dive' && seg.id !== 'summit';
@@ -248,13 +254,15 @@ export class Engine {
       const t = THREE.MathUtils.clamp((pc - a) / (bb - a), 0, 1);
       if (diving && i > 0) {
         f.setBeats(GLIMPSE);
-        f.u.uSee.value = 0.4 * smooth(0.0, 0.25, at.local);
+        f.u.uSee.value = 0.26 * smooth(0.0, 0.25, at.local);
         f.group.visible = f.loaded;
+        if (f.group.visible) f.update(this.time, dt, { velocity: 0, built: 0 });
       } else {
-        f.setBeats(beats(t));
+        const fb = beats(t);
+        f.setBeats(fb);
         f.group.visible = f.loaded && t > 0 && t < 1;
+        if (f.group.visible) f.update(this.time, dt, { velocity: this.velocity, built: fb.cast });
       }
-      if (f.group.visible) f.update(this.time, dt);
     });
 
     // camera
@@ -262,7 +270,7 @@ export class Engine {
     const wide = this.W >= 900 && this.W / this.H >= 1;
     const tall = this.W / this.H < 0.9;
     const wantX = era && wide ? 0.16 : 0;
-    const wantY = era && tall ? 0.14 : 0;
+    const wantY = era && tall ? 0.2 : 0;
     const k = 1 - Math.exp(-dt * 3);
     if (Math.abs(wantX - this.shiftX) > 1e-4 || Math.abs(wantY - this.shiftY) > 1e-4) {
       this.shiftX += (wantX - this.shiftX) * k;

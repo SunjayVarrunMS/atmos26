@@ -8,6 +8,8 @@ export type Tier = 'high' | 'mid' | 'low' | 'still';
 export interface TierSettings {
   /** cap on devicePixelRatio */
   dpr: number;
+  /** cap on drawing-buffer pixels: small screens get sharper, big ones don't cost more */
+  pixels: number;
   /** MSAA samples on the scene target (0 → FXAA) */
   msaa: number;
   bloom: boolean;
@@ -16,10 +18,14 @@ export interface TierSettings {
 }
 
 export const TIERS: Record<Exclude<Tier, 'still'>, TierSettings> = {
-  high: { dpr: 1.75, msaa: 4, bloom: true, points: 90000 },
-  mid: { dpr: 1.25, msaa: 0, bloom: true, points: 45000 },
-  low: { dpr: 0.9, msaa: 0, bloom: false, points: 22000 },
+  high: { dpr: 1.75, pixels: Infinity, msaa: 4, bloom: true, points: 90000 },
+  mid: { dpr: 2, pixels: 2e6, msaa: 0, bloom: true, points: 45000 },
+  low: { dpr: 1.25, pixels: 1.05e6, msaa: 0, bloom: false, points: 22000 },
 };
+
+export function pixelRatio(t: TierSettings, w: number, h: number) {
+  return Math.min(window.devicePixelRatio || 1, t.dpr, Math.sqrt(t.pixels / (w * h)));
+}
 
 export const LOWER: Record<Tier, Tier> = { high: 'mid', mid: 'low', low: 'still', still: 'still' };
 
@@ -59,9 +65,10 @@ function detect(): Tier {
   const small = Math.min(screen.width, screen.height) < 820;
 
   if (coarse && small) {
-    // phones: modern flagships get mid, the rest start low
-    if (/apple gpu|adreno \(tm\) (7[3-9]\d|8\d\d)|mali-g(7[1-9]|[89]\d|7\d\d)|immortalis|xclipse/.test(gpu)) return 'mid';
-    return cores >= 8 && mem >= 6 ? 'mid' : 'low';
+    // phones: most start mid (the governor steps down in place if it's too
+    // much); deviceMemory is bucketed to powers of two, so a 6 GB phone says 4
+    if (/apple gpu|adreno \(tm\) (6[4-9]\d|7\d\d|8\d\d)|mali-g(7[1-9]|[89]\d|7\d\d)|immortalis|xclipse/.test(gpu)) return 'mid';
+    return cores >= 8 && mem >= 4 ? 'mid' : 'low';
   }
   if (/intel/.test(gpu) && !/arc/.test(gpu)) return cores >= 8 ? 'mid' : 'low';
   return 'high';

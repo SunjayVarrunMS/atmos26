@@ -24,5 +24,5 @@ export default function World() {
   }, [tier]);
 
   if (tier === 'still') return null;
-  return <div ref={host} aria-hidden className="pointer-events-none fixed inset-0 z-0" style={{ opacity: 0 }} />;
+  return <div ref={host} aria-hidden className="pointer-events-none fixed inset-x-0 top-0 z-0 h-lvh" style={{ opacity: 0 }} />;
 }

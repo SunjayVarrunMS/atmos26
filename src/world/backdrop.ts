@@ -7,7 +7,7 @@ import { makeEnvironment } from './env';
 import { Lens } from './lens';
 import { shared } from './materials';
 import { Post } from './post';
-import { TIERS, type Tier } from './quality';
+import { pixelRatio, TIERS, type Tier } from './quality';
 import { beats, smooth } from './timeline';
 
 type LiveTier = Exclude<Tier, 'still'>;
@@ -95,7 +95,7 @@ export class Backdrop {
     const H = Math.max(1, this.host.clientHeight);
     this.W = W;
     this.H = H;
-    this.dpr = Math.min(window.devicePixelRatio || 1, this.settings.dpr);
+    this.dpr = pixelRatio(this.settings, W, H);
     this.renderer.setPixelRatio(this.dpr);
     this.renderer.setSize(W, H, false);
     const buf = this.renderer.getDrawingBufferSize(new THREE.Vector2());

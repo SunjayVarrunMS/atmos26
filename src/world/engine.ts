@@ -13,7 +13,7 @@ import { makeEnvironment } from './env';
 import { Lens } from './lens';
 import { shared } from './materials';
 import { Post } from './post';
-import { LOWER, TIERS, type Tier } from './quality';
+import { LOWER, pixelRatio, TIERS, type Tier } from './quality';
 import { Rig, type Key } from './rig';
 import { sound } from './sound';
 import { Shaft } from './shaft';
@@ -77,6 +77,8 @@ export class Engine {
   private widen = 1;
   /** how far a tall screen stands back: more for the machines than the dive and summit */
   private stand = 0.22;
+  /** the governor's in-place resolution cut, before it gives up a tier */
+  private dprScale = 1;
 
   private host: HTMLElement;
   private tier: LiveTier;
@@ -167,19 +169,26 @@ export class Engine {
     world.set({ ready: true });
     // the summit's ring is tiny; desktops fetch every floor now (the dive
     // glimpses them), phones fetch each one as they climb towards it
-    this.summit.load();
+    this.summit.load().then(this.calm);
     if (this.tier !== 'high') return;
     for (const f of this.floors.slice(1)) {
       await f.load(this.loader);
       if (this.disposed) return;
+      this.calm();
     }
   }
+
+  // building a floor stalls a frame or two; don't hold that against the device
+  private calm = () => {
+    this.frames = [];
+    this.settle = Math.max(this.settle, 45);
+  };
 
   // phones: fetch the floor above the one you're on
   private stream(pc: number) {
     if (this.tier === 'high') return;
     this.floors.forEach((f, i) => {
-      if (!f.loaded && pc >= BOUNDS[i][0]) f.load(this.loader);
+      if (!f.loaded && pc >= BOUNDS[i][0]) f.load(this.loader).then(this.calm);
     });
   }
 
@@ -205,7 +214,7 @@ export class Engine {
     const H = Math.max(1, this.host.clientHeight);
     this.W = W;
     this.H = H;
-    this.dpr = Math.min(window.devicePixelRatio || 1, TIERS[this.tier].dpr);
+    this.dpr = pixelRatio(TIERS[this.tier], W, H) * this.dprScale;
     this.renderer.setPixelRatio(this.dpr);
     this.renderer.setSize(W, H, false);
     const buf = this.renderer.getDrawingBufferSize(new THREE.Vector2());
@@ -421,14 +430,23 @@ export class Engine {
     this.frames.push(dt);
     if (this.frames.length > 120) this.frames.shift();
     if (this.frames.length === 120) {
-      const avg = this.frames.reduce((a, b) => a + b, 0) / 120;
+      // the median, so a hitch while a floor builds doesn't count, and a
+      // phone capped at 30 fps (low power mode) isn't mistaken for a slow one
+      const mid = [...this.frames].sort((a, b) => a - b)[60];
       if (this.debug) {
         const info = this.renderer.info.render;
-        this.debug.textContent = `tier ${this.tier}  ${(1 / avg).toFixed(0)} fps  dpr ${this.dpr.toFixed(2)}\ncalls ${info.calls}  tris ${(info.triangles / 1000).toFixed(0)}k`;
+        this.debug.textContent = `tier ${this.tier}  ${(1 / mid).toFixed(0)} fps  dpr ${this.dpr.toFixed(2)}\ncalls ${info.calls}  tris ${(info.triangles / 1000).toFixed(0)}k`;
       }
-      if (avg > 1 / 36 && !this.debug) {
+      if (mid > 1 / 26 && !this.debug) {
         this.frames = [];
-        this.onTier(LOWER[this.tier]);
+        // first draw fewer pixels in place; rebuilding at a lower tier is the last resort
+        if (this.dpr > 0.8 && this.dprScale > 0.6) {
+          this.dprScale *= 0.8;
+          this.settle = 30;
+          this.resize();
+        } else {
+          this.onTier(LOWER[this.tier]);
+        }
       }
       if (this.debug) this.frames = this.frames.slice(60);
     }

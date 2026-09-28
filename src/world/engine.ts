@@ -6,6 +6,7 @@ import { Chamber, type Floor } from './chamber';
 import { clockwork } from './chambers/clockwork';
 import { steam } from './chambers/steam';
 import { silicon } from './chambers/silicon';
+import { genome } from './chambers/genome';
 import { SketchChamber } from './chambers/sketch';
 import { makeEnvironment } from './env';
 import { Lens } from './lens';
@@ -104,7 +105,7 @@ export class Engine {
       new Chamber(clockwork, origin(0), settings.points),
       new Chamber(steam, origin(1), settings.points),
       new Chamber(silicon, origin(2), settings.points),
-      new SketchChamber('genome', 'dna', origin(3), 7),
+      new Chamber(genome, origin(3), settings.points),
       new SketchChamber('intelligence', 'brain', origin(4), 6),
     ];
     for (const f of this.floors) this.scene.add(f.group);

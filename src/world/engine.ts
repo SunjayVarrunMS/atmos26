@@ -63,6 +63,7 @@ export class Engine {
   private tmp = new THREE.Vector3();
   private tmp2 = new THREE.Vector3();
   private lastP = 0;
+  private portrait = 0;
   private capture = new URLSearchParams(location.search).has('capture');
   private wasLanded = false;
   private ringOffset = new THREE.Vector3(SUMMIT_RING, 0, 0);
@@ -87,6 +88,7 @@ export class Engine {
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.NoToneMapping;
     this.renderer.setClearColor(0x000000, 1);
+    this.renderer.info.autoReset = false;
     const canvas = this.renderer.domElement;
     canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block';
     canvas.addEventListener('webglcontextlost', this.onLost, false);
@@ -290,6 +292,8 @@ export class Engine {
       }
     });
 
+    const current = era ? this.floors[SEGMENTS[at.index].floor] : null;
+
     // camera
     this.rig.update(pc, dt, 0.16);
     const wide = this.W >= 900 && this.W / this.H >= 1;
@@ -303,7 +307,9 @@ export class Engine {
       this.shiftY += (wantY - this.shiftY) * k;
       this.applyView();
     }
-    const dolly = tall ? 1 + 0.22 * THREE.MathUtils.clamp((1 - this.W / this.H) / 0.55, 0, 1) : 1;
+    const floorPortrait = (current?.spec.portrait ?? 1) - 1;
+    this.portrait += (floorPortrait - this.portrait) * (1 - Math.exp(-dt * 2));
+    const dolly = tall ? (1 + 0.22 * THREE.MathUtils.clamp((1 - this.W / this.H) / 0.55, 0, 1)) * (1 + this.portrait) : 1;
     this.parallax.lerp(this.pointer, 1 - Math.exp(-dt * 2.5));
     this.tmp.subVectors(this.rig.pos, this.rig.look).multiplyScalar(dolly).add(this.rig.look);
     this.camera.position.copy(this.tmp);
@@ -320,7 +326,6 @@ export class Engine {
     this.rim.target.position.copy(L);
 
     // the lens has something to show once a machine is standing
-    const current = era ? this.floors[SEGMENTS[at.index].floor] : null;
     const standing = !!current && b.cast > 0.6 && b.exit < 0.3;
     // the network thinks on its own now and then, and on every click
     this.thinking = standing && seg.id === 'intelligence';
@@ -335,6 +340,8 @@ export class Engine {
     }
     this.lens.update(dt, now, this.W, this.H, this.focus);
     this.lens.write(shared.uLens.value, this.H, this.dpr);
+    const lensOn = shared.uLens.value.z > 0.5;
+    for (const f of this.floors) if (f.group.visible) f.cull?.(lensOn);
     this.post.setLens(shared.uLens.value);
 
     // where the summit ring sits on screen, for the artwork laid over it
@@ -348,6 +355,8 @@ export class Engine {
 
     this.voice(pc, fade);
     this.shaft.update(this.time);
+    // count the whole frame (scene and every post pass) for the debug readout
+    this.renderer.info.reset();
     this.post.render(dt);
     this.govern(dt);
   };

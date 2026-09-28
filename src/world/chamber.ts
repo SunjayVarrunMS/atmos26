@@ -30,6 +30,8 @@ export interface ChamberSpec {
   animate?: (root: THREE.Object3D, time: number, dt: number, ctx: MotionContext) => void;
   /** vertical extent used for the pour order; defaults to the model bounds */
   span?: [number, number];
+  /** extra pull-back on tall (phone) screens, for wide machines */
+  portrait?: number;
   /** blueprint order: lower parts first (default), or outward from the axis */
   drawFrom?: 'height' | 'radial';
   /** extra pieces a floor builds for itself once its model is in */
@@ -40,12 +42,14 @@ export interface ChamberSpec {
 export interface Floor {
   readonly group: THREE.Group;
   readonly u: ChamberUniforms;
-  readonly spec: Pick<ChamberSpec, 'id' | 'camera'>;
+  readonly spec: Pick<ChamberSpec, 'id' | 'camera' | 'portrait'>;
   loaded: boolean;
   load(loader: GLTFLoader): Promise<void>;
   /** `t` is the floor's local progress, for floors that keep their own time */
   setBeats(b: Beats, t?: number): void;
   update(time: number, dt: number, ctx: MotionContext): void;
+  /** skip whatever can't be seen this frame (metal before the pour, dots once built) */
+  cull?(lensOn: boolean): void;
   dispose(): void;
 }
 
@@ -88,6 +92,7 @@ export class Chamber implements Floor {
   private lineMat = makeLines(this.u);
   private pointMat: THREE.ShaderMaterial;
   private disposables: { dispose(): void }[] = [];
+  private layers = { surfaces: [] as THREE.Object3D[], lines: [] as THREE.Object3D[], points: [] as THREE.Object3D[] };
 
   constructor(spec: ChamberSpec, origin: THREE.Vector3, pointBudget: number) {
     this.spec = spec;
@@ -165,6 +170,7 @@ export class Chamber implements Floor {
         const mesh = new THREE.Mesh(merged, this.surface(name));
         mesh.name = `${carrier.name}:${name}`;
         carrier.add(mesh);
+        this.layers.surfaces.push(mesh);
         this.disposables.push(merged);
       }
     }
@@ -173,6 +179,7 @@ export class Chamber implements Floor {
       ls.frustumCulled = false;
       ls.renderOrder = 2;
       carrier.add(ls);
+      this.layers.lines.push(ls);
       this.disposables.push(geo);
     }
     for (const [carrier, geo] of points) {
@@ -180,6 +187,7 @@ export class Chamber implements Floor {
       pts.frustumCulled = false;
       pts.renderOrder = 3;
       carrier.add(pts);
+      this.layers.points.push(pts);
       this.disposables.push(geo);
     }
 
@@ -301,6 +309,16 @@ export class Chamber implements Floor {
 
   update(time: number, dt: number, ctx: MotionContext) {
     if (this.root && this.spec.animate) this.spec.animate(this.root, time, dt, ctx);
+  }
+
+  cull(lensOn: boolean) {
+    const u = this.u;
+    const metal = u.uCast.value > 0.001 && u.uExit.value < 0.999;
+    const ink = u.uDraw.value > 0.001 && u.uExit.value < 0.999 && (u.uCast.value < 0.999 || lensOn);
+    const dots = u.uArrive.value > 0.001 && (u.uSee.value > 0.001 || lensOn);
+    for (const o of this.layers.surfaces) o.visible = metal;
+    for (const o of this.layers.lines) o.visible = ink;
+    for (const o of this.layers.points) o.visible = dots;
   }
 
   dispose() {

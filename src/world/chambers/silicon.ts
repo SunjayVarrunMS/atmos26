@@ -112,6 +112,7 @@ export const silicon: ChamberSpec = {
   url: '/world/silicon.glb',
   span: [-3.2, 3.2],
   drawFrom: 'radial',
+  portrait: 1.2,
   setup: pulses,
   camera: [
     // level with the board as its dots arrive

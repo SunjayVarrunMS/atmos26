@@ -29,6 +29,12 @@ export function pixelRatio(t: TierSettings, w: number, h: number) {
 
 export const LOWER: Record<Tier, Tier> = { high: 'mid', mid: 'low', low: 'still', still: 'still' };
 
+/** a phone: touch-first and small. Its scroll is native momentum, not a wheel */
+export const PHONE =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(pointer: coarse)').matches &&
+  Math.min(screen.width, screen.height) < 820;
+
 let guessed: Tier | null = null;
 
 // the first guess is made once per page load (it creates a throwaway context)
@@ -61,10 +67,7 @@ function detect(): Tier {
   const nav = navigator as Navigator & { deviceMemory?: number };
   const cores = nav.hardwareConcurrency ?? 4;
   const mem = nav.deviceMemory ?? 4;
-  const coarse = window.matchMedia('(pointer: coarse)').matches;
-  const small = Math.min(screen.width, screen.height) < 820;
-
-  if (coarse && small) {
+  if (PHONE) {
     // phones: most start mid (the governor steps down in place if it's too
     // much); deviceMemory is bucketed to powers of two, so a 6 GB phone says 4
     if (/apple gpu|adreno \(tm\) (6[4-9]\d|7\d\d|8\d\d)|mali-g(7[1-9]|[89]\d|7\d\d)|immortalis|xclipse/.test(gpu)) return 'mid';

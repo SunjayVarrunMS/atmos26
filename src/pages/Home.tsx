@@ -8,6 +8,7 @@ import { ProshowTeaser } from '../components/home/ProshowTeaser';
 import { GalleryStrip } from '../components/home/GalleryStrip';
 import { Manifesto } from '../components/home/Manifesto';
 import { shouldShowPreloader } from '../lib/intro';
+import { PHONE } from '../world/quality';
 
 // the ascent's world: the heavy part of the page, fetched after the hero
 const World = lazy(() => import('../world/World'));
@@ -23,11 +24,16 @@ export default function Home() {
       <div className="relative z-[1]">
         <Hero />
         <Journey />
-        <Numbers />
-        <Categories />
-        <ProshowTeaser />
-        <GalleryStrip />
-        <Manifesto />
+        {/* phones end on the summit; these live on their own pages there */}
+        {!PHONE && (
+          <>
+            <Numbers />
+            <Categories />
+            <ProshowTeaser />
+            <GalleryStrip />
+            <Manifesto />
+          </>
+        )}
       </div>
     </>
   );

@@ -1,4 +1,5 @@
 import { ERAS, type EraId } from '../data/eras';
+import { PHONE } from './quality';
 
 /**
  * One timeline for the whole ascent. Scroll progress through the journey
@@ -16,10 +17,13 @@ export interface Segment {
   floor: number;
 }
 
+// a swipe throws a phone a screen or two, so its floors are shorter runs
+const LENGTHS = PHONE ? { dive: 0.7, era: 1.2, summit: 1.3 } : { dive: 1.6, era: 2.4, summit: 2.2 };
+
 export const SEGMENTS: Segment[] = [
-  { id: 'dive', vh: 1.6, floor: ERAS.length },
-  ...ERAS.map((e, i) => ({ id: e.id, vh: 2.4, floor: i })),
-  { id: 'summit', vh: 2.2, floor: ERAS.length },
+  { id: 'dive', vh: LENGTHS.dive, floor: ERAS.length },
+  ...ERAS.map((e, i) => ({ id: e.id, vh: LENGTHS.era, floor: i })),
+  { id: 'summit', vh: LENGTHS.summit, floor: ERAS.length },
 ];
 
 export const TOTAL_VH = SEGMENTS.reduce((s, x) => s + x.vh, 0);

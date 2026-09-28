@@ -1,15 +1,20 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router';
 import manifest from '../../data/logoLayers.json';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ERAS } from '../../data/eras';
 import { FEST } from '../../data/fest';
 import { useFinePointer } from '../../lib/hooks';
 import { FloorDial } from './FloorDial';
-import { guessTier } from '../../world/quality';
+import { PassesButton } from '../PassesButton';
+import { guessTier, PHONE } from '../../world/quality';
 import { useWorld, world } from '../../world/store';
 import { BOUNDS, SEGMENTS, TOTAL_VH } from '../../world/timeline';
 
 const EXPO = [0.16, 1, 0.3, 1] as const;
+// phones skip the blur: animating a filter over the live world costs frames
+const SOFT = PHONE ? {} : { filter: 'blur(10px)' };
+const SHARP = PHONE ? {} : { filter: 'blur(0px)' };
 
 /**
  * The ascent. A tall pinned section: the world behind reads its scroll
@@ -55,7 +60,7 @@ function Pinned() {
         />
       ))}
 
-      <div className="pointer-events-none sticky top-0 z-10 h-svh overflow-hidden">
+      <div data-stage className="pointer-events-none sticky top-0 z-10 h-svh overflow-hidden">
         <SummitArtwork />
         <AnimatePresence mode="wait">
           {show && seg.id === 'dive' && (
@@ -69,28 +74,32 @@ function Pinned() {
             </Statement>
           )}
           {landed && (
-            <motion.p
+            <motion.div
               key="landed"
-              className="text-lift absolute inset-x-0 bottom-[9svh] px-4 text-center text-[1.05rem] text-stone-dim"
+              className="absolute inset-x-0 bottom-[max(2rem,6svh)] px-4 text-center"
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 1, ease: EXPO, delay: 0.3 }}
             >
-              <span className="text-stone">Fri 23 – Sun 25 October</span>
-              <span className="mx-2 text-brass" aria-hidden>
-                /
-              </span>
-              {FEST.college}, {FEST.campus}
-            </motion.p>
+              <p className={`text-lift text-[1.05rem] text-stone-dim ${PHONE ? '' : 'mb-[3svh]'}`}>
+                <span className="text-stone">Fri 23 – Sun 25 October</span>
+                <span className="mx-2 text-brass" aria-hidden>
+                  /
+                </span>
+                {FEST.college}, {FEST.campus}
+              </p>
+              {/* phones end the page here: the summit is also the way in */}
+              {PHONE && <WaysIn className="pointer-events-auto mx-auto mt-6 max-w-[24rem]" />}
+            </motion.div>
           )}
           {show && era && (
             <motion.div
               key={era.id}
               className="absolute inset-x-0 bottom-0 px-4 pb-[max(2.5rem,8svh)] sm:px-8 md:inset-y-0 md:flex md:items-center md:pb-0"
-              initial={{ opacity: 0, y: 28, filter: 'blur(10px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
+              initial={{ opacity: 0, y: 28, ...SOFT }}
+              animate={{ opacity: 1, y: 0, ...SHARP }}
+              exit={{ opacity: 0, y: -20, ...SOFT }}
               transition={{ duration: 0.8, ease: EXPO }}
             >
               {/* phones: the copy sits under the machine, so it gets a dark floor to stand on */}
@@ -174,9 +183,9 @@ function Statement({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
       className="absolute inset-0 flex items-center justify-center px-4 sm:px-8"
-      initial={{ opacity: 0, y: 24, filter: 'blur(10px)' }}
-      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-      exit={{ opacity: 0, y: -18, filter: 'blur(10px)' }}
+      initial={{ opacity: 0, y: 24, ...SOFT }}
+      animate={{ opacity: 1, y: 0, ...SHARP }}
+      exit={{ opacity: 0, y: -18, ...SOFT }}
       transition={{ duration: 1, ease: EXPO }}
     >
       <p className="display max-w-[14ch] text-center text-[clamp(2.2rem,4.6vw,4.4rem)] text-stone text-balance">{children}</p>
@@ -217,7 +226,33 @@ function Stack() {
         <p className="display mt-[10svh] text-[clamp(2rem,4vw,3.6rem)] text-stone">
           This time the tool <span className="text-brass-hi">reaches back.</span>
         </p>
+        {PHONE && <WaysIn className="mt-10" />}
       </div>
     </section>
+  );
+}
+
+// the ways on from the summit, for phones, where the page ends there
+function WaysIn({ className = '' }: { className?: string }) {
+  return (
+    <div className={className}>
+      <div className="flex flex-col gap-3">
+        <Link
+          to="/events"
+          className="inline-flex h-12 items-center justify-center bg-stone px-7 text-[0.95rem] font-semibold text-void transition-colors hover:bg-brass-hi"
+        >
+          Explore events
+        </Link>
+        <PassesButton />
+      </div>
+      <p className="mt-5 flex justify-center gap-6 text-[1.05rem]">
+        <Link to="/proshows" className="text-stone-dim underline decoration-brass/60 hover:text-stone">
+          Proshows
+        </Link>
+        <Link to="/gallery" className="text-stone-dim underline decoration-brass/60 hover:text-stone">
+          Gallery
+        </Link>
+      </p>
+    </div>
   );
 }

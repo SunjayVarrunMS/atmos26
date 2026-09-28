@@ -13,7 +13,7 @@ import { makeEnvironment } from './env';
 import { Lens } from './lens';
 import { shared } from './materials';
 import { Post } from './post';
-import { LOWER, pixelRatio, TIERS, type Tier } from './quality';
+import { LOWER, PHONE, pixelRatio, TIERS, type Tier } from './quality';
 import { Rig, type Key } from './rig';
 import { sound } from './sound';
 import { Shaft } from './shaft';
@@ -79,6 +79,8 @@ export class Engine {
   private stand = 0.22;
   /** the governor's in-place resolution cut, before it gives up a tier */
   private dprScale = 1;
+  /** the journey progress the world shows; on phones it eases after the scroll */
+  private flow = 0;
 
   private host: HTMLElement;
   private tier: LiveTier;
@@ -269,7 +271,7 @@ export class Engine {
     // how much of the world is on screen: fades in as the hero leaves, out
     // once the ascent is over
     const el = world.journey();
-    const p = journeyProgress();
+    const raw = journeyProgress();
     let fade = 0;
     if (el) {
       const r = el.getBoundingClientRect();
@@ -280,8 +282,15 @@ export class Engine {
     if (fade <= 0.001) {
       world.set({ segment: -1, text: false });
       this.settle = 30;
+      this.flow = raw;
       return;
     }
+    // a swipe throws a phone a screen or more in a blink; the world follows
+    // over a moment, so a machine still builds instead of jumping to its end.
+    // A jump (a link, a restored scroll position) lands at once
+    if (!PHONE || Math.abs(raw - this.flow) > 0.3) this.flow = raw;
+    else this.flow += (raw - this.flow) * (1 - Math.exp(-dt / 0.32));
+    const p = this.flow;
 
     const pc = THREE.MathUtils.clamp(p, 0, 1);
     this.stream(pc);
@@ -332,7 +341,8 @@ export class Engine {
     const tall = this.W / this.H < 0.9;
     // capture mode (for the rendered stills) keeps every machine centred
     const wantX = era && wide && !this.capture ? 0.16 : 0;
-    const wantY = era && tall && !this.capture ? 0.2 : 0;
+    // phones end the page on the summit, so its ring rises clear of the ways in below it
+    const wantY = this.capture || !tall ? 0 : era ? 0.2 : summit && PHONE ? 0.14 : 0;
     const floorPortrait = (current?.spec.portrait ?? 1) - 1;
     this.portrait += (floorPortrait - this.portrait) * (1 - Math.exp(-dt * 2));
     this.stand += ((era ? 0.75 : 0.22) - this.stand) * (1 - Math.exp(-dt * 2));

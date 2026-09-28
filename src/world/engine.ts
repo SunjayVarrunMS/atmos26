@@ -156,10 +156,22 @@ export class Engine {
     }
     if (this.disposed) return;
     world.set({ ready: true });
+    // the summit's ring is tiny; desktops fetch every floor now (the dive
+    // glimpses them), phones fetch each one as they climb towards it
+    this.summit.load();
+    if (this.tier !== 'high') return;
     for (const f of this.floors.slice(1)) {
       await f.load(this.loader);
       if (this.disposed) return;
     }
+  }
+
+  // phones: fetch the floor above the one you're on
+  private stream(pc: number) {
+    if (this.tier === 'high') return;
+    this.floors.forEach((f, i) => {
+      if (!f.loaded && pc >= BOUNDS[i][0]) f.load(this.loader);
+    });
   }
 
   private buildKeys(): Key[] {
@@ -253,6 +265,7 @@ export class Engine {
     }
 
     const pc = THREE.MathUtils.clamp(p, 0, 1);
+    this.stream(pc);
     // scroll speed, smoothed: some machines run on it
     if (dt > 0) this.velocity += ((pc - this.lastP) / dt - this.velocity) * (1 - Math.exp(-dt * 6));
     this.lastP = pc;

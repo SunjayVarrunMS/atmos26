@@ -76,6 +76,8 @@ function Pinned() {
             >
               {/* phones: the copy sits under the machine, so it gets a dark floor to stand on */}
               <div aria-hidden className="absolute inset-x-0 bottom-0 h-[62svh] bg-linear-to-t from-void via-void/80 to-transparent md:hidden" />
+              {/* wide screens: a soft shade on the copy's side, so drawings behind it stay quiet */}
+              <div aria-hidden className="absolute inset-y-0 left-0 hidden w-[48%] bg-linear-to-r from-void/75 via-void/40 to-transparent md:block" />
               <div className="relative mx-auto w-full max-w-[1440px]">
                 <div className="max-w-[30rem] md:max-w-[38%]">
                   <p className="stencil text-[clamp(1.4rem,2.2vw,2rem)] text-brass" style={{ textTransform: 'none' }}>

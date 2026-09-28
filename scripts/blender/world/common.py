@@ -71,6 +71,11 @@ MATS = {
     "enamel": dict(color=(0.012, 0.018, 0.015), metal=0.0, rough=0.22),
     "copper": dict(color=(0.75, 0.38, 0.22), metal=1.0, rough=0.3),
     "wood": dict(color=(0.16, 0.1, 0.06), metal=0.0, rough=0.8),
+    "epoxy": dict(color=(0.018, 0.018, 0.02), metal=0.0, rough=0.5),
+    "mask": dict(color=(0.008, 0.035, 0.024), metal=0.0, rough=0.28),
+    "solder": dict(color=(0.72, 0.72, 0.74), metal=1.0, rough=0.25),
+    "silk": dict(color=(0.55, 0.52, 0.48), metal=0.0, rough=0.7),
+    "sleeve": dict(color=(0.03, 0.028, 0.03), metal=0.2, rough=0.4),
 }
 
 
@@ -401,6 +406,36 @@ def bake_ao(objs, samples=96, distance=0.6):
 
 def meshes():
     return [o for o in bpy.context.scene.objects if o.type == "MESH"]
+
+
+def join_static():
+    """Join every mesh that moves with the same node and shares a material
+    into one object. Use on floors with hundreds of small static parts (the
+    circuit board); floors whose blueprint is drawn part by part keep theirs."""
+    groups = {}
+    for ob in meshes():
+        carrier = ob.parent
+        while carrier is not None and carrier.get("role") in (None, "static") and carrier.get("chamber") is None:
+            carrier = carrier.parent
+        mat = ob.data.materials[0].name if ob.data.materials else ""
+        groups.setdefault((carrier.name if carrier else "", mat), []).append(ob)
+    for (carrier, mat), obs in groups.items():
+        if len(obs) < 2:
+            continue
+        bpy.ops.object.select_all(action="DESELECT")
+        for o in obs:
+            # bake transforms so the join keeps every part in place
+            o.select_set(True)
+        bpy.context.view_layer.objects.active = obs[0]
+        bpy.ops.object.parent_clear(type="CLEAR_KEEP_TRANSFORM")
+        bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+        bpy.ops.object.join()
+        joined = bpy.context.active_object
+        joined.name = f"{mat}_joined" if not carrier else f"{carrier}_{mat}"
+        if carrier:
+            joined.parent = bpy.data.objects[carrier]
+            joined.matrix_parent_inverse = bpy.data.objects[carrier].matrix_world.inverted()
+    print(f"JOINED into {len(meshes())} meshes")
 
 
 def export(name):

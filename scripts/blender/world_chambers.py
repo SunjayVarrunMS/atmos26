@@ -21,6 +21,8 @@ for name in names:
     mod = importlib.import_module(name)
     common.reset()
     mod.build()
+    if getattr(mod, "JOIN_STATIC", False):
+        common.join_static()
     if "--no-bake" not in flags:
         common.bake_ao(common.meshes())
     if "--preview" in flags:

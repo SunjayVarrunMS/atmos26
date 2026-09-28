@@ -93,6 +93,12 @@ const METALS: Record<string, THREE.MeshStandardMaterialParameters & { ao?: numbe
   enamel: { color: '#0b120f', metalness: 0.0, roughness: 0.2, envMapIntensity: 1.25 },
   copper: { color: '#c7784c', metalness: 1, roughness: 0.3, envMapIntensity: 1.0 },
   wood: { color: '#3a2618', metalness: 0, roughness: 0.85, envMapIntensity: 0.3 },
+  // the circuit board
+  epoxy: { color: '#1f1e22', metalness: 0, roughness: 0.46, envMapIntensity: 1.1 },
+  mask: { color: '#07160f', metalness: 0, roughness: 0.3, envMapIntensity: 1.1 },
+  solder: { color: '#b9bcc0', metalness: 1, roughness: 0.3, envMapIntensity: 0.9 },
+  silk: { color: '#8a8177', metalness: 0, roughness: 0.75, envMapIntensity: 0.4 },
+  sleeve: { color: '#141316', metalness: 0.2, roughness: 0.4, envMapIntensity: 0.9 },
 };
 
 export const MOLTEN = new THREE.Color(4.0, 2.0, 0.7);
@@ -258,7 +264,8 @@ export function makePoints(u: ChamberUniforms, size = 2.2) {
         float s = fract(wp.y * 0.07 - uTime * 0.12);
         vScan = smoothstep(0.0, 0.04, s) * (1.0 - smoothstep(0.04, 0.16, s));
         vRand = aRand;
-        gl_PointSize = uSize * uPixelRatio * (0.55 + aRand.w * 0.9) * (14.0 / max(1.0, -mv.z)) * (1.0 - vLens * 0.25);
+        // near dots stay dots: capped so nothing swells into a disc in front of the lens
+        gl_PointSize = min(uSize * uPixelRatio * (0.55 + aRand.w * 0.9) * (14.0 / max(1.0, -mv.z)) * (1.0 - vLens * 0.25), 5.0 * uPixelRatio);
       }`,
     fragmentShader: /* glsl */ `
       varying float vVis;

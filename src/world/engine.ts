@@ -5,6 +5,7 @@ import { ERAS } from '../data/eras';
 import { Chamber, type Floor } from './chamber';
 import { clockwork } from './chambers/clockwork';
 import { steam } from './chambers/steam';
+import { silicon } from './chambers/silicon';
 import { SketchChamber } from './chambers/sketch';
 import { makeEnvironment } from './env';
 import { Lens } from './lens';
@@ -102,7 +103,7 @@ export class Engine {
     this.floors = [
       new Chamber(clockwork, origin(0), settings.points),
       new Chamber(steam, origin(1), settings.points),
-      new SketchChamber('silicon', 'city', origin(2), 7.5),
+      new Chamber(silicon, origin(2), settings.points),
       new SketchChamber('genome', 'dna', origin(3), 7),
       new SketchChamber('intelligence', 'brain', origin(4), 6),
     ];

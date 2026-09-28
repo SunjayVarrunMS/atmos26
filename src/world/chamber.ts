@@ -30,6 +30,10 @@ export interface ChamberSpec {
   animate?: (root: THREE.Object3D, time: number, dt: number, ctx: MotionContext) => void;
   /** vertical extent used for the pour order; defaults to the model bounds */
   span?: [number, number];
+  /** blueprint order: lower parts first (default), or outward from the axis */
+  drawFrom?: 'height' | 'radial';
+  /** extra pieces a floor builds for itself once its model is in */
+  setup?: (root: THREE.Object3D, u: ChamberUniforms) => { dispose(): void } | void;
 }
 
 /** anything the engine can stack in the shaft */
@@ -178,6 +182,9 @@ export class Chamber implements Floor {
       this.disposables.push(geo);
     }
 
+    const extra = this.spec.setup?.(root, this.u);
+    if (extra) this.disposables.push(extra);
+
     this.group.add(root);
     this.loaded = true;
   }
@@ -187,6 +194,8 @@ export class Chamber implements Floor {
    *  their length, lower parts first. Merged per carrier. */
   private buildLines(parts: Part[], root: THREE.Object3D, y0: number, y1: number) {
     const out = new Map<THREE.Object3D, THREE.BufferGeometry[]>();
+    const bounds = new THREE.Box3().setFromObject(root);
+    const reach = Math.max(1e-3, bounds.max.x, -bounds.min.x, bounds.max.z, -bounds.min.z);
     const v = new THREE.Vector3();
     const centre = new THREE.Vector3();
     const rootInv = new THREE.Matrix4().copy(root.matrixWorld).invert();
@@ -209,14 +218,27 @@ export class Chamber implements Floor {
         Math.max(size.x, size.y) > 0.25;
       const axis = size.x >= size.y ? (size.x >= size.z ? 0 : 2) : size.y >= size.z ? 1 : 2;
 
-      // lower parts start first; each part takes 40% of the drawing time
+      // lower (or inner) parts start first; each part takes 40% of the drawing time
       centre.set(0, 0, 0);
       mesh.localToWorld(centre).applyMatrix4(rootInv);
-      const h = THREE.MathUtils.clamp((centre.y - y0) / (y1 - y0), 0, 1);
+      const h =
+        this.spec.drawFrom === 'radial'
+          ? THREE.MathUtils.clamp(Math.hypot(centre.x, centre.z) / reach, 0, 1)
+          : THREE.MathUtils.clamp((centre.y - y0) / (y1 - y0), 0, 1);
       const start = h * 0.6;
 
+      // parts joined in Blender (a whole board) are drawn point by point instead
+      const perVertex = carrier === root && size.length() > reach * 0.5;
       for (let i = 0; i < pos.count; i++) {
         v.fromBufferAttribute(pos, i);
+        if (perVertex) {
+          const hv =
+            this.spec.drawFrom === 'radial'
+              ? Math.hypot(v.x, v.z) / reach
+              : (v.y - y0) / (y1 - y0);
+          order[i] = 0.02 + 0.9 * THREE.MathUtils.clamp(hv, 0, 1);
+          continue;
+        }
         const local = compass
           ? (Math.atan2(v.y, v.x) / (Math.PI * 2) + 1) % 1
           : (v.getComponent(axis) - bb.min.getComponent(axis)) / Math.max(1e-4, size.getComponent(axis));

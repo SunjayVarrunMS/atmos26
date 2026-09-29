@@ -171,7 +171,7 @@ A black void with brass as the structural ink, stone for reading, teal light hel
 - **Signal Cyan** (signal): the focus outline, the glitch's cyan channel, the near readings inside the loupe, a thought climbing the network, and the ping on the contact map.
 
 ### Tertiary
-- **Glitch Red** (glitch): the red channel of the stencil glitch split (countdown, proshow codenames, 404) and the preloader's second hand. Nothing else.
+- **Glitch Red** (glitch): the red channel of the stencil glitch split (countdown, past-edition numbers, proshow codenames, 404) and the preloader's second hand. Nothing else.
 
 ### Neutral
 - **Void** (void): page background, nav backdrop at 80%, the iris cover, text on stone fills.

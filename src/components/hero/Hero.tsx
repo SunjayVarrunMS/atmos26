@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { FEST } from '../../data/fest';
+import { TITLE_SPONSOR } from '../../data/sponsors';
 import { intro, useIntroPhase } from '../../lib/intro';
 import { useFinePointer, useReducedMotion } from '../../lib/hooks';
 import { PassesButton } from '../PassesButton';
@@ -13,8 +14,8 @@ const EXPO = [0.16, 1, 0.3, 1] as const;
 
 /**
  * First screen, set like the countdown reel's end card: the official logo
- * above, "N DAYS TO GO" in the reel's stencil below, then the facts and the
- * two actions. Nothing else.
+ * above, the title sponsor's credit, "N DAYS TO GO" in the reel's stencil
+ * below, then the facts and the two actions. Nothing else.
  */
 export function Hero() {
   const section = useRef<HTMLElement>(null);
@@ -26,8 +27,9 @@ export function Hero() {
   const { scrollYProgress } = useScroll({ target: section, offset: ['start start', 'end start'] });
   const stageScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
   const stageY = useTransform(scrollYProgress, [0, 1], ['0%', '14%']);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
-  const textY = useTransform(scrollYProgress, [0, 0.3], ['0%', '40%']);
+  // the copy drifts a little and is gone before it reaches the section's edge
+  const textOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
+  const textY = useTransform(scrollYProgress, [0, 0.25], ['0%', '24%']);
 
   const onBuilt = useCallback(() => {
     setBuilt(true);
@@ -50,7 +52,7 @@ export function Hero() {
   return (
     <section
       ref={section}
-      className="relative isolate flex min-h-svh flex-col items-center overflow-hidden bg-void pb-10 pt-16"
+      className="relative isolate flex min-h-svh flex-col items-center overflow-x-clip bg-void pb-10 pt-16"
       aria-labelledby="hero-title"
     >
       <h1 id="hero-title" className="sr-only">
@@ -59,7 +61,7 @@ export function Hero() {
       </h1>
 
       <motion.div
-        className="relative w-[min(100vw,600px)] sm:w-[min(88vw,calc(100svh-4rem-min(13vw,19svh)-6.5rem))]"
+        className="relative w-[min(100vw,600px)] sm:w-[min(88vw,calc(100svh-4rem-min(13vw,19svh)-9rem))]"
         style={still ? undefined : { scale: stageScale, y: stageY }}
         data-hero-stage
       >
@@ -78,6 +80,19 @@ export function Hero() {
         className="relative z-10 -mt-[3%] flex w-full flex-col items-center px-4 sm:px-8"
         style={still ? undefined : { opacity: textOpacity, y: textY }}
       >
+        {TITLE_SPONSOR && (
+          <motion.a
+            {...reveal(2.4)}
+            href={TITLE_SPONSOR.href}
+            target="_blank"
+            rel="noreferrer"
+            className="text-lift mb-2 mt-2 flex items-center gap-3 text-[0.95rem] text-stone-dim transition-colors duration-300 hover:text-stone sm:mb-3 sm:mt-4"
+          >
+            Sponsored by
+            <img src={TITLE_SPONSOR.logo} alt={TITLE_SPONSOR.name} width={1192} height={264} className="h-6 w-auto sm:h-7" />
+          </motion.a>
+        )}
+
         <motion.div {...reveal(2.5)}>
           <Countdown className="text-[18vw] sm:text-[min(15vw,17svh)]" />
         </motion.div>

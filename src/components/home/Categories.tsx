@@ -19,7 +19,7 @@ export function Categories() {
     <section className="relative px-4 py-[16svh] sm:px-8" aria-labelledby="cats-title">
       <div className="mx-auto max-w-[1440px]">
         <div className="flex flex-wrap items-end justify-between gap-6">
-          <h2 id="cats-title" className="display text-[clamp(2rem,3.6vw,3.4rem)] text-stone">
+          <h2 id="cats-title" className="display text-[clamp(3rem,7vw,6.8rem)] text-stone">
             Pick your <span className="text-brass-hi">arena</span>
           </h2>
           <Link to="/events" className="text-[1.05rem] text-stone-dim underline decoration-brass/60 hover:text-stone">

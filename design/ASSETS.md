@@ -27,6 +27,9 @@ How every shipped asset was made, so it can be regenerated.
 - `python scripts/events/generate.py [--only id,…] [--seeds …]` renders candidates into `design/review/events/`, `scripts/events/picks.json` records the chosen seed per event, and `python scripts/events/export.py` writes 960×720 WebP (quality 80) with the prompt and seed in XMP.
 - The toolkit lives outside the repo and OneDrive at `C:\Users\sunja\atmos-ai\` (a venv on the system torch, `HF_HOME` there).
 
+## Sponsor logos — `public/sponsors/*.webp`
+- `synchrony.webp`: the title sponsor's logo as the team supplied it (dark wordmark and yellow bars on white, `design/source/synchrony.jpg`), reversed for the black ground by `python scripts/sponsor_logo.py` (Pillow + numpy): white keyed out, wordmark turned white, bars keep their own yellow, cropped, lossless WebP with alpha and its origin in XMP. Replace it with Synchrony's official reversed file if they send one.
+
 ## Other rasters
 - `public/og.jpg`, `public/favicon.png`, `public/apple-touch-icon.png`: made in PIL from the official artwork (+ Stardos Stencil / Archivo for the share card).
 - `public/gallery/*`: past-edition photos supplied by the team.

@@ -14,12 +14,14 @@ function daysUntil(now: number, when: Date) {
   return Math.round((ist(when.getTime()) - ist(now)) / 86_400_000);
 }
 
-// one stencil digit that rolls up to its new value, like a mechanical counter
+// one stencil digit that rolls up to its new value, like a mechanical counter.
+// The window is clipped to the glyphs' own height (Stardos digits fill about
+// 0.08–0.8em of the line), so a rolling digit never shows below the row.
 function RollDigit({ d, glitch, still }: { d: string; glitch: boolean; still: boolean }) {
   return (
     <span
       data-text={d}
-      className={`glitch-text relative inline-block h-[1em] w-[0.6em] overflow-hidden text-center leading-none ${glitch ? 'glitch-run' : ''}`}
+      className={`glitch-text relative inline-block h-[1em] w-[0.6em] overflow-hidden text-center leading-none [clip-path:inset(0.04em_0_0.18em)] ${glitch ? 'glitch-run' : ''}`}
     >
       {still ? (
         <span className="absolute inset-0">{d}</span>

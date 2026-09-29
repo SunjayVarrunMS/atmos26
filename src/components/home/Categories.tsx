@@ -47,7 +47,7 @@ export function Categories() {
                     {c.label}
                   </span>
                   <span className="text-lift max-w-[26ch] text-right text-stone-dim">
-                    <span className="display block text-3xl text-stone">{String(n).padStart(2, '0')}</span>
+                    <span className="stencil block text-3xl text-stone">{String(n).padStart(2, '0')}</span>
                     <span className="hidden md:block">{c.blurb}</span>
                   </span>
                 </Link>

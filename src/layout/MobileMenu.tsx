@@ -61,7 +61,7 @@ export function MobileMenu({ onClose }: { onClose: () => void }) {
 
       <div className="relative flex h-full flex-col px-6 pb-8 pt-5">
         <div className="flex items-center justify-between">
-          <span className="display text-[1.35rem]">
+          <span className="stencil text-[1.35rem]">
             ATMOS <span className="text-brass">’26</span>
           </span>
           <button
@@ -109,7 +109,7 @@ function MenuLink({ to, label, i }: { to: string; label: string; i: number }) {
         to={to}
         end={to === '/'}
         className={({ isActive }) =>
-          `display block py-1 text-[clamp(2.6rem,12vw,4.5rem)] transition-colors ${
+          `stencil block py-1 text-[clamp(2.6rem,12vw,4.5rem)] transition-colors ${
             isActive ? 'text-brass' : 'text-stone hover:text-brass-hi'
           }`
         }

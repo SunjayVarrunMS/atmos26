@@ -108,7 +108,7 @@ function Pinned() {
               <div aria-hidden className="absolute inset-y-0 left-0 hidden w-[48%] bg-linear-to-r from-void/75 via-void/40 to-transparent md:block" />
               <div className="relative mx-auto w-full max-w-[1440px]">
                 <div className="max-w-[30rem] md:max-w-[38%]">
-                  <p className="display text-[clamp(1.4rem,2.2vw,2rem)] text-brass" style={{ textTransform: 'none' }}>
+                  <p className="stencil text-[clamp(1.4rem,2.2vw,2rem)] text-brass" style={{ textTransform: 'none' }}>
                     {era.when}
                   </p>
                   <h3 className="display mt-2 text-[clamp(2.4rem,5vw,4.6rem)] text-stone">{era.name}</h3>
@@ -214,7 +214,7 @@ function Stack() {
                 className="aspect-[16/10] w-full bg-soot object-cover md:col-span-7"
               />
               <div className="md:col-span-5">
-                <p className="display text-[clamp(1.3rem,2vw,1.8rem)] text-brass" style={{ textTransform: 'none' }}>
+                <p className="stencil text-[clamp(1.3rem,2vw,1.8rem)] text-brass" style={{ textTransform: 'none' }}>
                   {e.when}
                 </p>
                 <h3 className="display mt-2 text-[clamp(1.9rem,3.4vw,3rem)] text-stone">{e.name}</h3>

@@ -23,31 +23,28 @@ typography:
     letterSpacing: "-0.01em"
   stencil:
     fontFamily: "Stardos Stencil, Archivo Variable, serif"
-    fontSize: "3.75rem"
+    fontSize: "clamp(3rem, 9vw, 8rem)"
     fontWeight: 700
     lineHeight: 0.9
     letterSpacing: "-0.01em"
   display:
-    fontFamily: "Hubot Sans Variable, Archivo Variable, sans-serif"
+    fontFamily: "Big Shoulders Stencil Display, Archivo Variable, sans-serif"
     fontSize: "clamp(3rem, 11vw, 11rem)"
-    fontWeight: 800
+    fontWeight: 700
     lineHeight: 0.95
-    letterSpacing: "-0.005em"
-    fontVariation: "'wdth' 75"
+    letterSpacing: "0.01em"
   headline:
-    fontFamily: "Hubot Sans Variable, Archivo Variable, sans-serif"
+    fontFamily: "Big Shoulders Stencil Display, Archivo Variable, sans-serif"
     fontSize: "clamp(2rem, 3.6vw, 3.4rem)"
-    fontWeight: 800
+    fontWeight: 700
     lineHeight: 0.95
-    letterSpacing: "-0.005em"
-    fontVariation: "'wdth' 75"
+    letterSpacing: "0.01em"
   title:
-    fontFamily: "Hubot Sans Variable, Archivo Variable, sans-serif"
+    fontFamily: "Big Shoulders Stencil Display, Archivo Variable, sans-serif"
     fontSize: "clamp(1.5rem, 2vw, 1.9rem)"
-    fontWeight: 800
+    fontWeight: 700
     lineHeight: 0.95
-    letterSpacing: "-0.005em"
-    fontVariation: "'wdth' 75"
+    letterSpacing: "0.01em"
   lead:
     fontFamily: "Archivo Variable, Archivo, system-ui, sans-serif"
     fontSize: "clamp(1.05rem, 1.4vw, 1.3rem)"
@@ -145,13 +142,13 @@ components:
 
 The site is the fest's Instagram campaign made navigable. It opens on one centred, formal column: the official artwork builds itself layer by layer, the title sponsor (Synchrony) sits under it with a "Title sponsor" label, then the dates and venue, then a live days : hours : minutes : seconds clock in the reel's stencil, digits rolling like a mechanical counter, with a red glitch, and the two actions. Below that, the page becomes a shaft you rise through: a dive down past brass collars to the 1700s, then five lit machines, each on its own floor: a tower-clock movement, a locomotive's running gear, a circuit board grown into a skyline, the 1953 double-helix model, and a string-art network. Every machine is first perceived as dots, then drawn as a blueprint, then cast in metal from the bottom up, and it leaves as dust streaming to the next floor. At the summit the dust gathers into the logo's ring and the untouched artwork lands in it. A loupe under the pointer shows each machine the way a machine sees it. Everything sits in lit darkness: black ground, light that falls from above, and a single brass-lit phrase per statement.
 
-Density is low and scale is high. Statements are set in heavy condensed caps (Hubot Sans, a mechanical grotesk) at confident but measured sizes; only page titles run poster-scale. Lists are full-width hairline rows, not grids of cards. Photos rest in a black-to-brass duotone and get their colour back only when you point at them. The surface is analogue film rather than a HUD: static grain over everything, and projector-gate scratches over the hero and page headers. The world is built to refuse the dark sci-fi HUD kit (mono micro-labels, notched buttons, corner brackets, glow orbs) and the generic fest template (video hero and neon cards).
+Density is low and scale is high. Statements are set in condensed stencil caps (Big Shoulders Stencil) at confident but measured sizes; only page titles run poster-scale. Lists are full-width hairline rows, not grids of cards. Photos rest in a black-to-brass duotone and get their colour back only when you point at them. The surface is analogue film rather than a HUD: static grain over everything, and projector-gate scratches over the hero and page headers. The world is built to refuse the dark sci-fi HUD kit (mono micro-labels, notched buttons, corner brackets, glow orbs) and the generic fest template (video hero and neon cards).
 
 The official artwork is the identity, and it is never redrawn. It may be split into its original layers and animated (build-up, idle parallax), but every visible pixel stays identical to `atmos-website.jpg`, and `scripts/verify_logo.py` checks the layers. Dots may trace the ring, but the raster always supplies the logo itself.
 
 **Key Characteristics:**
 - Lit darkness. Black ground; light falls from above onto brass, iron and glass, and one brass-hi phrase carries each statement.
-- Three type voices: the reel stencil for the countdown, condensed Hubot Sans caps for statements, names and figures, plain Archivo for reading and controls.
+- Three type voices: the reel stencil for time and names, condensed stencil caps for statements, plain Archivo for reading and controls.
 - Photos rest in a brass duotone and regain colour on hover.
 - Film grain everywhere, with projector scratches on the hero and page headers.
 - Rectangular text controls with square corners. The circle belongs only to the ring motif.
@@ -192,18 +189,18 @@ A black void with brass as the structural ink, stone for reading, teal light hel
 
 ## Typography
 
-**Display Font:** Hubot Sans Variable, 800 weight at 75% width (with Archivo Variable)
-**Stencil Font:** Stardos Stencil 700 (with Archivo Variable), for the countdown and the preloader's counter only
+**Display Font:** Archivo Variable, set wide (with Archivo, system-ui)
+**Stencil Font:** Stardos Stencil 700 (with Archivo Variable)
 **Body Font:** Archivo Variable at normal width
 **Label Font:** Archivo Variable condensed to 70% width (not a mono face)
 **Logo Font:** Cinzel Variable, used only for the preloader dial numerals, where it echoes the logo's lettering
 
-**Character:** The stencil comes straight from the countdown reel and is kept for the clock alone. Hubot Sans caps, heavy and condensed, with the squared-off curves of machined parts, carry statements, names and figures; they sit a step down from poster scale so the page never shouts. Plain Archivo handles reading and every control, in sentence case.
+**Character:** The stencil comes straight from the countdown reel and speaks for time and names. Big Shoulders Stencil caps, condensed and cut like crate markings, carry statements; they sit a step down from poster scale so the page never shouts. Plain Archivo handles reading and every control, in sentence case.
 
 ### Hierarchy
 - **Countdown** (Stardos Stencil 700, 13vw on phones and min(8vw, 9svh) above, compressed horizontally to 74%, under the hero's dates): "27:07:42:19" in the hero, stone digits with stone-mute colons, and "days / hrs / min / sec" under each group in plain Archivo (0.95rem, stone-dim, sentence case). One line, a glitch every 5–12 s.
-- **Stencil** (700, 3.75rem, 0.9): the preloader percentage, beside the countdown. Nothing else.
-- **Display** (Hubot Sans Variable 800 at 75% width, uppercase, -0.005em, 0.95): page titles at clamp(3rem, 11vw, 11rem), stat figures and the "Pick your arena" heading at clamp(3rem, 7vw, 6.8rem), category rows at clamp(1.75rem, 4.6vw, 4.25rem), era names at clamp(2rem, 4.2vw, 4rem). The same voice sets proshow codenames, the nav, menu and footer wordmark, the 404 title, category counts and era years (brass, uppercase transform off).
+- **Stencil** (700, clamp(3rem, 9vw, 8rem), 0.9): proshow codenames, the footer wordmark (clamp(3.4rem, 6vw, 5.5rem)), the 404 title, the nav wordmark (1.35rem), category counts (1.875rem), the preloader percentage. Era years use it in brass at clamp(1.6rem, 3vw, 2.6rem) with the uppercase transform switched off.
+- **Display** (Big Shoulders Stencil Display 700, uppercase, 0.01em, 0.95): page titles at clamp(3rem, 11vw, 11rem), stat figures at clamp(3rem, 7vw, 6.8rem), category rows at clamp(1.75rem, 4.6vw, 4.25rem), era names at clamp(2rem, 4.2vw, 4rem).
 - **Headline** (display voice, clamp(2rem, 3.6vw, 3.4rem) to clamp(2rem, 4.2vw, 4rem)): section statements, with the closing statement at clamp(1.8rem, 3vw, 3rem).
 - **Title** (display voice, clamp(1.5rem, 2vw, 1.9rem)): event card titles and similar in-list headings.
 - **Lead** (Archivo 400, clamp(1.05rem, 1.4vw, 1.3rem), 1.625): the one plain sentence under a page title, era copy and section intros. Stone-dim, limited to 28–52ch.
@@ -212,7 +209,7 @@ A black void with brass as the structural ink, stone for reading, teal light hel
 - **Label** (Archivo 650, 0.82rem, width 70%, 0.04em, tabular figures): the era index under the progress bars and the skip link. The uppercase transform is optional (the era index turns it off).
 
 ### Named Rules
-**The Three Voices Rule.** The stencil is for the countdown (and its preloader counter), condensed Hubot Sans caps are for statements, names and figures, and plain Archivo is for reading and controls. Cinzel belongs to the logo and the preloader dial, and nowhere else.
+**The Three Voices Rule.** Stencil is for time and names, condensed stencil caps are for statements, and plain Archivo is for reading and controls. Cinzel belongs to the logo and the preloader dial, and nowhere else.
 
 **The Condensed Clock Rule.** The countdown is always the stencil compressed horizontally to 74% on one line, centred under the dates. Its unit words are counter-scaled so they read at normal proportions.
 
@@ -265,15 +262,15 @@ Cards are the exception here. Rows are the rule.
 
 ### Navigation
 - **Bar:** fixed, 64px tall. It is transparent at the top of the page. After 24px of scroll it gets a void/80 fill, a medium backdrop blur and a brass-line bottom border (500ms expo-out).
-- **Wordmark:** display voice at 1.35rem, "ATMOS" in stone and "'26" in brass.
+- **Wordmark:** stencil at 1.35rem, "ATMOS" in stone and "'26" in brass.
 - **Links:** sentence case, 0.95rem medium, stone-dim, turning stone on hover. A 1px brass underline scales in from the left over 500ms. The active link is brass-hi and keeps its underline.
-- **Mobile:** below 1024px, a 44px circular brass-line toggle with two offset hairlines opens a full-screen menu. The menu has a 140vmin brass ring with teal light inside it and display-voice links at clamp(2.6rem, 12vw, 4.5rem).
+- **Mobile:** below 1024px, a 44px circular brass-line toggle with two offset hairlines opens a full-screen menu. The menu has a 140vmin brass ring with teal light inside it and stencil links at clamp(2.6rem, 12vw, 4.5rem).
 
 ### Photos (duotone)
 Every photo passes through one SVG filter that maps luminance from black to brass to stone. The colour returns only on hover or focus of the containing group, with a 700ms expo-out filter transition. Images never scale on hover. Background photos (proshow bands) stay duotone at 25–40% opacity under a black gradient.
 
 ### Category rows (signature)
-Full-width rows with the category name in display caps at clamp(1.9rem, 8vw, 7.5rem) on the left, and a display-voice count plus a blurb on the right. Hovering a row turns it brass-hi and shifts it 12px right, dims every other row to stone/25, and brings up that category's 4:5 duotone photo. The photo enters with an iris-like vertical clip, a small rotation and a scale from 0.9. Colour goes to whatever is active.
+Full-width rows with the category name in display caps at clamp(1.9rem, 8vw, 7.5rem) on the left, and a stencil count plus a blurb on the right. Hovering a row turns it brass-hi and shifts it 12px right, dims every other row to stone/25, and brings up that category's 4:5 duotone photo. The photo enters with an iris-like vertical clip, a small rotation and a scale from 0.9. Colour goes to whatever is active.
 
 ### The Ascension (signature)
 One fixed WebGL world behind the home page, driven by a single scroll timeline (`src/world/timeline.ts`). A dive down a shaft of machined brass collars, then five floors, one per era, then the summit. Every floor plays the same beats on its own slice of the scroll: **arrive** (the machine's points rise into place), **draw** (its blueprint is drawn part by part: round parts swept by a compass, the rest along their length, lower parts first), **cast** (metal pours into the drawing from the bottom up behind a thin molten front), **stand** (the machine runs; copy is readable), **exit** (it breaks into dust that streams up to the next floor). The camera moves like a loupe, not a roller coaster: small, deliberate moves per floor, rising through a collar between floors. Phones scroll by native momentum, not a wheel, so they get a shorter ascent (1.2 screens a floor instead of 2.4), the world eases after each swipe instead of jumping, and the page ends at the summit: under the ring sit the date, Explore events, Passes, and links to Proshows and Gallery. The sections after the ascent are laptop-only. Scrolling is never snapped or taken over.
@@ -310,7 +307,7 @@ A canvas overlay that redraws at 12 fps and pauses when off screen. Each frame d
 
 ### Do:
 - **Do** keep the ground black and let the light come from the world: skylight on metal, emissive fronts, stone text and one brass-hi phrase.
-- **Do** use the stencil for the countdown only, Hubot Sans caps (800 weight, 75% width) for statements, names, figures and the wordmark, and plain Archivo in sentence case for reading and controls.
+- **Do** use the stencil for time, years, codenames and the wordmark, Big Shoulders Stencil caps (700 weight, 0.01em tracking) for statements, and plain Archivo in sentence case for reading and controls.
 - **Do** compress the countdown to 74% width on one line.
 - **Do** set lists as full-width rows on stone/12 hairlines, with 24px row padding (32px from 768px), inside the 1440px container.
 - **Do** keep text controls as square-cornered rectangles (primary is a stone fill, secondary is a stone/35 outline, both 48px tall).

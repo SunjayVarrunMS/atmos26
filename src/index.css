@@ -1,20 +1,8 @@
 @import "@fontsource-variable/cinzel";
 @import "@fontsource-variable/archivo/wdth";
 @import "@fontsource/stardos-stencil/latin-700";
-@import "@fontsource-variable/hubot-sans/wdth.css";
+@import "@fontsource/big-shoulders-stencil-display/latin-700";
 @import "tailwindcss";
-
-/* Hubot Sans draws zero with a bar, so "30,000" read like "3θ,θθθ". Headings
-   take only the plain zero (and its tabular form) from its sibling Mona Sans,
-   subset to that one glyph (see design/ASSETS.md). */
-@font-face {
-  font-family: "Plain Zero";
-  src: url("./fonts/plain-zero.woff2") format("woff2-variations");
-  font-weight: 200 900;
-  font-stretch: 75% 125%;
-  font-display: swap;
-  unicode-range: U+0030;
-}
 
 /* ── ATMOS '26 tokens ─────────────────────────────────────────────
    Pure black void, brass as the only structural ink, teal light that lives
@@ -36,10 +24,9 @@
 
   /* Cinzel is the logo's own face: preloader dial only */
   --font-cinzel: "Cinzel Variable", "Cinzel", serif;
-  /* the reel's "30 DAYS TO GO" face: the countdown and its preloader counter only */
+  /* the reel's "30 DAYS TO GO" face */
   --font-stencil: "Stardos Stencil", "Archivo Variable", serif;
-  /* statements, names and figures: a mechanical grotesk, condensed */
-  --font-display: "Plain Zero", "Hubot Sans Variable", "Archivo Variable", sans-serif;
+  --font-display: "Big Shoulders Stencil Display", "Archivo Variable", sans-serif;
   --font-sans: "Archivo Variable", "Archivo", system-ui, sans-serif;
 
   /* text depth: a soft drop like the one under the logo's stone letters, plus a
@@ -232,13 +219,12 @@ html.has-reticle textarea { cursor: text; }
 /* over the ascent the loupe draws its own ring; the reticle keeps its dot */
 html[data-lens] .reticle-ring { visibility: hidden; }
 
-/* statements, names and figures: Hubot Sans caps, heavy and condensed */
+/* statements: condensed stencil caps, like crate markings in a machine shop */
 @utility display {
   font-family: var(--font-display);
-  font-weight: 800;
-  font-stretch: 75%;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: -0.005em;
+  letter-spacing: 0.01em;
   line-height: 0.95;
   text-shadow: var(--shadow-text-display);
 }

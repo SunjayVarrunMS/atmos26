@@ -54,7 +54,7 @@ CI runs all four on every pull request. A red check blocks the merge.
 ## Design rules (from DESIGN.md: read it for the full system)
 - Lit darkness: black ground, light from above. Text in stone. **One brass-highlighted phrase per statement.** Teal only in the dust, inside a ring (the loupe) or as signal on the network. Red (`glitch`) only for the glitch effect. Bloom only on things that emit light.
 - Use the tokens and utilities: `text-stone`, `text-brass-hi`, `display`, `stencil`, `meta`, `text-lift`, `duotone`. **No raw hex colours** in UI code and no new fonts. (3D material colours live in `src/world/materials.ts`.)
-- Type: `stencil` (Stardos Stencil) for the countdown, years and codenames. `display` (Big Shoulders Stencil caps) for statements. Plain Archivo for reading and controls. Cinzel belongs to the logo only.
+- Type: `stencil` (Stardos Stencil) for the countdown only. `display` (Hubot Sans caps, condensed) for statements, names, figures and the wordmark. Plain Archivo for reading and controls. Cinzel belongs to the logo only.
 - Buttons are plain rectangles: solid stone primary, outlined secondary, sentence case.
 - Photos use `duotone` and get their colour back on hover. **No hover zoom.**
 - Icons come from `lucide-react` (stroke 1.5), never Unicode arrows or emoji.

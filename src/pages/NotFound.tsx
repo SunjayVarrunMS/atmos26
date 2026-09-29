@@ -18,7 +18,7 @@ export default function NotFound() {
         <ParticleField className="z-0" />
       </Suspense>
       <div className="relative z-10 text-center">
-        <h1 id="nf-title" data-text="Signal lost" className="stencil glitch-text glitch-run text-[clamp(3.6rem,13vw,11rem)] text-stone">
+        <h1 id="nf-title" data-text="Signal lost" className="display glitch-text glitch-run text-[clamp(3.6rem,13vw,11rem)] text-stone">
           Signal lost
         </h1>
         <p className="mx-auto mt-5 max-w-[38ch] text-[1.05rem] text-stone-dim">

@@ -29,7 +29,7 @@ export function ProshowTeaser() {
               <p className="text-lift text-stone-dim">
                 {p.night} · {p.date}
               </p>
-              <p className="stencil glitch-text text-[clamp(2.4rem,5.8vw,5.2rem)] text-stone" data-text={p.codename}>
+              <p className="display glitch-text text-[clamp(2.4rem,5.8vw,5.2rem)] text-stone" data-text={p.codename}>
                 {p.codename}
               </p>
               <p className="text-lift text-stone-dim md:text-right">

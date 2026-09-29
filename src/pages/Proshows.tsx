@@ -39,7 +39,7 @@ export default function Proshows() {
                   <p className="text-stone-dim">
                     {p.night} · {p.date}
                   </p>
-                  <p className="stencil glitch-text mt-10 text-[clamp(2.8rem,6.5vw,6rem)] text-stone" data-text={p.codename}>
+                  <p className="display glitch-text mt-10 text-[clamp(2.8rem,6.5vw,6rem)] text-stone" data-text={p.codename}>
                     {p.codename}
                   </p>
                 </div>

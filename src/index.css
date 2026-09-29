@@ -1,7 +1,7 @@
 @import "@fontsource-variable/cinzel";
 @import "@fontsource-variable/archivo/wdth";
 @import "@fontsource/stardos-stencil/latin-700";
-@import "@fontsource/big-shoulders-stencil-display/latin-700";
+@import "@fontsource-variable/hubot-sans/wdth.css";
 @import "tailwindcss";
 
 /* ── ATMOS '26 tokens ─────────────────────────────────────────────
@@ -24,9 +24,10 @@
 
   /* Cinzel is the logo's own face: preloader dial only */
   --font-cinzel: "Cinzel Variable", "Cinzel", serif;
-  /* the reel's "30 DAYS TO GO" face */
+  /* the reel's "30 DAYS TO GO" face: the countdown and its preloader counter only */
   --font-stencil: "Stardos Stencil", "Archivo Variable", serif;
-  --font-display: "Big Shoulders Stencil Display", "Archivo Variable", sans-serif;
+  /* statements, names and figures: a mechanical grotesk, condensed */
+  --font-display: "Hubot Sans Variable", "Archivo Variable", sans-serif;
   --font-sans: "Archivo Variable", "Archivo", system-ui, sans-serif;
 
   /* text depth: a soft drop like the one under the logo's stone letters, plus a
@@ -219,12 +220,13 @@ html.has-reticle textarea { cursor: text; }
 /* over the ascent the loupe draws its own ring; the reticle keeps its dot */
 html[data-lens] .reticle-ring { visibility: hidden; }
 
-/* statements: condensed stencil caps, like crate markings in a machine shop */
+/* statements, names and figures: Hubot Sans caps, heavy and condensed */
 @utility display {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 800;
+  font-stretch: 75%;
   text-transform: uppercase;
-  letter-spacing: 0.01em;
+  letter-spacing: -0.005em;
   line-height: 0.95;
   text-shadow: var(--shadow-text-display);
 }

@@ -28,6 +28,9 @@ How every shipped asset was made, so it can be regenerated.
 ## Sponsor logos — `public/sponsors/*.webp`
 - `synchrony.webp`: the title sponsor's logo as the team supplied it (dark wordmark and yellow bars on white, `design/source/synchrony.jpg`), reversed for the black ground by `python scripts/sponsor_logo.py` (Pillow + numpy): white keyed out, wordmark turned white, bars keep their own yellow, cropped, lossless WebP with alpha and its origin in XMP. Replace it with Synchrony's official reversed file if they send one.
 
+## Plain zero — `src/fonts/plain-zero.woff2`
+- Hubot Sans (the display face) has a barred zero. This is Mona Sans's zero and its tabular form only, variable axes kept, from `@fontsource-variable/mona-sans` 5.3.0 (OFL-1.1): `npm pack @fontsource-variable/mona-sans@5.3.0`, then `pyftsubset package/files/mona-sans-latin-wdth-normal.woff2 --unicodes=U+0030 --layout-features=tnum --flavor=woff2 --no-hinting --output-file=src/fonts/plain-zero.woff2`. `src/index.css` puts it first in `--font-display` with `unicode-range: U+0030`.
+
 ## Other rasters
 - `public/og.jpg`, `public/favicon.png`, `public/apple-touch-icon.png`: made in PIL from the official artwork (+ Stardos Stencil / Archivo for the share card).
 - `public/gallery/*`: past-edition photos supplied by the team.

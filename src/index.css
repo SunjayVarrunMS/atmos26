@@ -4,6 +4,18 @@
 @import "@fontsource-variable/hubot-sans/wdth.css";
 @import "tailwindcss";
 
+/* Hubot Sans draws zero with a bar, so "30,000" read like "3θ,θθθ". Headings
+   take only the plain zero (and its tabular form) from its sibling Mona Sans,
+   subset to that one glyph (see design/ASSETS.md). */
+@font-face {
+  font-family: "Plain Zero";
+  src: url("./fonts/plain-zero.woff2") format("woff2-variations");
+  font-weight: 200 900;
+  font-stretch: 75% 125%;
+  font-display: swap;
+  unicode-range: U+0030;
+}
+
 /* ── ATMOS '26 tokens ─────────────────────────────────────────────
    Pure black void, brass as the only structural ink, teal light that lives
    inside rings and along traces, stone for reading text, glitch red for
@@ -27,7 +39,7 @@
   /* the reel's "30 DAYS TO GO" face: the countdown and its preloader counter only */
   --font-stencil: "Stardos Stencil", "Archivo Variable", serif;
   /* statements, names and figures: a mechanical grotesk, condensed */
-  --font-display: "Hubot Sans Variable", "Archivo Variable", sans-serif;
+  --font-display: "Plain Zero", "Hubot Sans Variable", "Archivo Variable", sans-serif;
   --font-sans: "Archivo Variable", "Archivo", system-ui, sans-serif;
 
   /* text depth: a soft drop like the one under the logo's stone letters, plus a

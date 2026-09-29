@@ -8,14 +8,13 @@ import { useFinePointer, useReducedMotion } from '../../lib/hooks';
 import { PassesButton } from '../PassesButton';
 import { FilmScratches } from '../FilmScratches';
 import { LogoStage } from './LogoStage';
-import { Countdown } from './Countdown';
 
 const EXPO = [0.16, 1, 0.3, 1] as const;
 
 /**
  * First screen, one centred column: the official logo, the title sponsor,
- * the dates and venue, the live countdown in the reel's stencil, then the
- * two actions. Nothing else.
+ * the dates and venue, then the two actions. Nothing else. The live
+ * countdown has its own band right below (home/CountdownBand).
  */
 export function Hero() {
   const section = useRef<HTMLElement>(null);
@@ -61,7 +60,7 @@ export function Hero() {
       </h1>
 
       <motion.div
-        className="relative w-[min(100vw,600px)] sm:w-[min(88vw,calc(100svh-4rem-min(8vw,9svh)-19rem-4svh))]"
+        className="relative w-[min(100vw,600px)] sm:w-[min(88vw,calc(100svh-4rem-16.5rem-4svh))]"
         style={still ? undefined : { scale: stageScale, y: stageY }}
         data-hero-stage
       >
@@ -106,12 +105,8 @@ export function Hero() {
           </p>
         </motion.div>
 
-        <motion.div {...reveal(2.7)} className="mt-5 sm:mt-[2.5svh]">
-          <Countdown className="text-[13vw] sm:text-[min(8vw,9svh)]" />
-        </motion.div>
-
         <motion.div
-          {...reveal(2.85)}
+          {...reveal(2.7)}
           className="mt-6 flex w-full flex-col gap-3 sm:mt-[3svh] sm:w-auto sm:flex-row sm:justify-center"
         >
           <Link

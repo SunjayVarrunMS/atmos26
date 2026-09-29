@@ -2,6 +2,7 @@ import { lazy, Suspense, useState } from 'react';
 import { Hero } from '../components/hero/Hero';
 import { Preloader } from '../components/hero/Preloader';
 import { Journey } from '../components/home/Journey';
+import { CountdownBand } from '../components/home/CountdownBand';
 import { Numbers } from '../components/home/Numbers';
 import { Categories } from '../components/home/Categories';
 import { ProshowTeaser } from '../components/home/ProshowTeaser';
@@ -23,6 +24,7 @@ export default function Home() {
       </Suspense>
       <div className="relative z-[1]">
         <Hero />
+        <CountdownBand />
         <Journey />
         {/* phones end on the summit; these live on their own pages there */}
         {!PHONE && (

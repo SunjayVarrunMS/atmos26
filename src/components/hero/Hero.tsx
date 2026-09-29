@@ -13,9 +13,9 @@ import { Countdown } from './Countdown';
 const EXPO = [0.16, 1, 0.3, 1] as const;
 
 /**
- * First screen, set like the countdown reel's end card: the official logo
- * above, the title sponsor's credit, "N DAYS TO GO" in the reel's stencil
- * below, then the facts and the two actions. Nothing else.
+ * First screen, one centred column: the official logo, the title sponsor,
+ * the dates and venue, the live countdown in the reel's stencil, then the
+ * two actions. Nothing else.
  */
 export function Hero() {
   const section = useRef<HTMLElement>(null);
@@ -61,7 +61,7 @@ export function Hero() {
       </h1>
 
       <motion.div
-        className="relative w-[min(100vw,600px)] sm:w-[min(88vw,calc(100svh-4rem-min(13vw,19svh)-9rem))]"
+        className="relative w-[min(100vw,600px)] sm:w-[min(88vw,calc(100svh-4rem-min(8vw,9svh)-19rem-4svh))]"
         style={still ? undefined : { scale: stageScale, y: stageY }}
         data-hero-stage
       >
@@ -77,7 +77,7 @@ export function Hero() {
       </motion.div>
 
       <motion.div
-        className="relative z-10 -mt-[3%] flex w-full flex-col items-center px-4 sm:px-8"
+        className="relative z-10 -mt-[3%] flex w-full flex-col items-center px-4 text-center sm:px-8"
         style={still ? undefined : { opacity: textOpacity, y: textY }}
       >
         {TITLE_SPONSOR && (
@@ -86,38 +86,44 @@ export function Hero() {
             href={TITLE_SPONSOR.href}
             target="_blank"
             rel="noreferrer"
-            className="text-lift mb-2 mt-2 flex items-center gap-3 text-[0.95rem] text-stone-dim transition-colors duration-300 hover:text-stone sm:mb-3 sm:mt-4"
+            className="group mt-5 flex flex-col items-center gap-2 sm:mt-[4svh]"
           >
-            Sponsored by
-            <img src={TITLE_SPONSOR.logo} alt={TITLE_SPONSOR.name} width={1192} height={264} className="h-6 w-auto sm:h-7" />
+            <img
+              src={TITLE_SPONSOR.logo}
+              alt={TITLE_SPONSOR.name}
+              width={1192}
+              height={264}
+              className="h-9 w-auto sm:h-[clamp(2.25rem,5svh,2.75rem)]"
+            />
+            <span className="meta text-stone-dim transition-colors duration-300 group-hover:text-stone">Title sponsor</span>
           </motion.a>
         )}
 
-        <motion.div {...reveal(2.5)}>
-          <Countdown className="text-[18vw] sm:text-[min(15vw,17svh)]" />
+        <motion.div {...reveal(2.55)} className="mt-6 sm:mt-[3svh]">
+          <p className="display text-[clamp(1.75rem,min(4vw,5.5svh),3.2rem)] text-stone">23–25 October 2026</p>
+          <p className="meta mt-2 text-stone-dim">
+            {FEST.college}, {FEST.campus}
+          </p>
+        </motion.div>
+
+        <motion.div {...reveal(2.7)} className="mt-5 sm:mt-[2.5svh]">
+          <Countdown className="text-[13vw] sm:text-[min(8vw,9svh)]" />
         </motion.div>
 
         <motion.div
-          {...reveal(2.75)}
-          className="mt-5 flex w-full max-w-[min(92vw,68rem)] flex-col items-center gap-5 sm:mt-6 md:flex-row md:justify-between"
+          {...reveal(2.85)}
+          className="mt-6 flex w-full flex-col gap-3 sm:mt-[3svh] sm:w-auto sm:flex-row sm:justify-center"
         >
-          <p className="text-lift text-center text-[1.05rem] leading-snug text-stone-dim md:text-left">
-            <span className="text-stone">Fri 23 – Sun 25 October</span>
-            <span className="mx-2 text-brass" aria-hidden>/</span>
-            BITS Pilani, Hyderabad Campus
-          </p>
-          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-            <Link
-              to="/events"
-              className="inline-flex h-12 items-center justify-center gap-3 bg-stone px-6 text-[0.95rem] font-semibold text-void transition-colors duration-300 hover:bg-brass-hi"
-            >
-              Explore events
-              <svg viewBox="0 0 24 12" className="w-5" aria-hidden>
-                <path d="M0 6h22M17 1l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.6" />
-              </svg>
-            </Link>
-            <PassesButton />
-          </div>
+          <Link
+            to="/events"
+            className="inline-flex h-12 items-center justify-center gap-3 bg-stone px-6 text-[0.95rem] font-semibold text-void transition-colors duration-300 hover:bg-brass-hi"
+          >
+            Explore events
+            <svg viewBox="0 0 24 12" className="w-5" aria-hidden>
+              <path d="M0 6h22M17 1l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.6" />
+            </svg>
+          </Link>
+          <PassesButton />
         </motion.div>
       </motion.div>
 

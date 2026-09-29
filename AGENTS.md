@@ -63,7 +63,7 @@ CI runs all four on every pull request. A red check blocks the merge.
 - Motion: expo-out easing (`ease-out-expo`), blur-to-sharp reveals, one idea per section. Always check it with reduced motion on.
 
 ## Adding things
-- **A new event:** add an entry to `EVENTS` in `src/data/events.ts` with real info. Put the poster in `public/events/` and use it as `image`.
+- **A new event:** add an entry to `EVENTS` in `src/data/events.ts` with real info. When the club sends a poster, put it in `public/events/` and set it as `image`; until then the event shows no picture.
 - **A new page:** create `src/pages/Name.tsx` (start with `PageHeader`), add a lazy route in `src/main.tsx`, and add it to `NAV` in `src/data/fest.ts`.
 - **Changing a floor's machine:** edit its module in `scripts/blender/world/` (materials by name from `common.py`; motion hints as node extras), run the Blender script with `--preview` to check it, then without to bake and export, then `npm run pack:world`. Keep each packed GLB near 700 KB. Its motion lives in `src/world/chambers/<floor>.ts`.
 - **Stills:** after changing a floor, re-render its still (`?capture` centres the machine; see `design/ASSETS.md`).

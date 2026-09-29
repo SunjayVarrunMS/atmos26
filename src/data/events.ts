@@ -61,8 +61,7 @@ export interface FestEvent {
   note?: string;
   /** organising club(s), joint events list more than one */
   clubs?: ClubSlug[];
-  /** 4:3 photo, /events/<id>.webp unless set. A generated stand-in until the club's
-   * poster arrives, then the poster replaces that file (see design/ASSETS.md). */
+  /** the club's 4:3 poster in public/events/, once it arrives; no picture until then */
   image?: string;
 }
 
@@ -127,7 +126,7 @@ const LIST: FestEvent[] = [
 
 // by category, then biggest prize first; events without a prize keep list order
 const order = CATEGORIES.map((c) => c.id);
-export const EVENTS: (FestEvent & { image: string })[] = LIST.map((e) => ({ ...e, image: e.image ?? `/events/${e.id}.webp` })).sort(
+export const EVENTS: FestEvent[] = [...LIST].sort(
   (a, b) => order.indexOf(a.category) - order.indexOf(b.category) || (b.prize ?? -1) - (a.prize ?? -1),
 );
 

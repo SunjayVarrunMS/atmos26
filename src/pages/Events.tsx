@@ -83,7 +83,7 @@ export default function Events() {
                   className={`group relative border-t border-stone/12 ${hot === e.id ? 'z-10' : ''}`}
                 >
                   <AnimatePresence>
-                    {hot === e.id && (
+                    {hot === e.id && e.image && (
                       <motion.img
                         src={e.image}
                         alt=""
@@ -99,15 +99,17 @@ export default function Events() {
                   </AnimatePresence>
                   <article className="grid gap-4 py-6 md:grid-cols-[minmax(0,1fr)_26rem] md:items-baseline md:gap-10 md:py-7">
                     <div className="flex items-start gap-4">
-                      {/* phones and tablets have no hover, so the photo sits in the row */}
-                      <img
-                        src={e.image}
-                        alt=""
-                        width={960}
-                        height={720}
-                        loading="lazy"
-                        className="duotone mt-1 aspect-[4/3] w-24 shrink-0 bg-soot object-cover transition-[filter] duration-700 ease-out-expo group-hover:[filter:none] group-focus-within:[filter:none] sm:w-28 lg:hidden"
-                      />
+                      {/* phones and tablets have no hover, so the poster sits in the row */}
+                      {e.image && (
+                        <img
+                          src={e.image}
+                          alt=""
+                          width={960}
+                          height={720}
+                          loading="lazy"
+                          className="duotone mt-1 aspect-[4/3] w-24 shrink-0 bg-soot object-cover transition-[filter] duration-700 ease-out-expo group-hover:[filter:none] group-focus-within:[filter:none] sm:w-28 lg:hidden"
+                        />
+                      )}
                       <div className="min-w-0">
                         <h2 className="display text-[clamp(1.4rem,2.2vw,2rem)] text-stone transition-colors duration-500 ease-out-expo group-hover:text-brass-hi">
                           <Link to={`/events/${e.id}`} className="underline-offset-[0.15em] focus-visible:underline">

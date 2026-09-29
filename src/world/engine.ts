@@ -282,7 +282,7 @@ export class Engine {
     const opacity = fade.toFixed(3);
     if (opacity !== this.opacity) this.host.style.opacity = this.opacity = opacity;
     if (fade <= 0.001) {
-      world.set({ segment: -1, text: false });
+      world.set({ segment: -1, text: false, sponsor: false });
       this.settle = 30;
       this.flow = raw;
       return;
@@ -309,8 +309,11 @@ export class Engine {
       text:
         p >= 0 &&
         p <= 1 &&
-        (era ? b.text : summit ? at.local > 0.06 && at.local < 0.44 : at.local > 0.08 && at.local < 0.92),
-      landed: summit && at.local > 0.6,
+        (era ? b.text : summit ? at.local > 0.05 && at.local < 0.3 : at.local > 0.08 && at.local < 0.92),
+      // the summit: statement while the ring gathers, then the title sponsor
+      // in the empty ring, then the artwork lands in it
+      sponsor: p >= 0 && p <= 1 && summit && at.local > 0.34 && at.local < 0.52,
+      landed: summit && at.local > 0.68,
     });
     if (world.get().landed && !this.wasLanded) sound.event('land');
     this.wasLanded = world.get().landed;
@@ -482,6 +485,6 @@ export class Engine {
     this.renderer.dispose();
     this.renderer.domElement.remove();
     this.debug?.remove();
-    world.set({ ready: false, segment: -1, text: false });
+    world.set({ ready: false, segment: -1, text: false, sponsor: false });
   }
 }

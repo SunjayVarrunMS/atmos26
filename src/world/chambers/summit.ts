@@ -61,8 +61,9 @@ export class Summit implements Floor {
     void b;
     this.u.uArrive.value = smooth(0.0, 0.34, t);
     this.u.uExit.value = 0;
-    this.logo = smooth(0.46, 0.66, t);
-    this.u.uSee.value = 1 - smooth(0.58, 0.74, t);
+    // the ring stays empty for the title sponsor (0.34–0.52), then the artwork lands
+    this.logo = smooth(0.54, 0.7, t);
+    this.u.uSee.value = 1 - smooth(0.64, 0.78, t);
   }
 
   update() {}

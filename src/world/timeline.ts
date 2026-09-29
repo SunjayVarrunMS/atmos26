@@ -18,7 +18,7 @@ export interface Segment {
 }
 
 // a swipe throws a phone a screen or two, so its floors are shorter runs
-const LENGTHS = PHONE ? { dive: 0.7, era: 1.2, summit: 1.3 } : { dive: 1.6, era: 2.4, summit: 2.2 };
+const LENGTHS = PHONE ? { dive: 0.7, era: 1.2, summit: 1.5 } : { dive: 1.6, era: 2.4, summit: 2.6 };
 
 export const SEGMENTS: Segment[] = [
   { id: 'dive', vh: LENGTHS.dive, floor: ERAS.length },

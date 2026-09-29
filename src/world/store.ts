@@ -15,11 +15,13 @@ export interface WorldView {
   tier: Tier | null;
   /** the first chamber is loaded and compiled */
   ready: boolean;
+  /** the title sponsor holds the empty summit ring, between the statement and the artwork */
+  sponsor: boolean;
   /** the official artwork has landed in the summit ring */
   landed: boolean;
 }
 
-let view: WorldView = { segment: -1, text: false, tier: null, ready: false, landed: false };
+let view: WorldView = { segment: -1, text: false, tier: null, ready: false, sponsor: false, landed: false };
 const subs = new Set<() => void>();
 
 // the journey section, measured by the engine every frame

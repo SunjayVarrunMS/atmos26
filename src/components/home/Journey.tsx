@@ -4,6 +4,7 @@ import manifest from '../../data/logoLayers.json';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ERAS } from '../../data/eras';
 import { FEST } from '../../data/fest';
+import { TITLE_SPONSOR } from '../../data/sponsors';
 import { useFinePointer } from '../../lib/hooks';
 import { FloorDial } from './FloorDial';
 import { PassesButton } from '../PassesButton';
@@ -30,7 +31,7 @@ export function Journey() {
 
 function Pinned() {
   const ref = useRef<HTMLElement>(null);
-  const { segment, text, ready, landed } = useWorld();
+  const { segment, text, ready, sponsor, landed } = useWorld();
   const fine = useFinePointer();
 
   useEffect(() => {
@@ -62,6 +63,7 @@ function Pinned() {
 
       <div data-stage className="pointer-events-none sticky top-0 z-10 h-svh overflow-hidden">
         <SummitArtwork />
+        <SummitSponsor show={sponsor} />
         <AnimatePresence mode="wait">
           {show && seg.id === 'dive' && (
             <Statement key="dive">
@@ -179,6 +181,51 @@ function SummitArtwork() {
   );
 }
 
+/**
+ * The title sponsor, big, in the empty summit ring: after "This time the tool
+ * reaches back." and before the artwork lands. Sized and centred on the ring
+ * the engine reports every frame, like the artwork.
+ */
+function SummitSponsor({ show }: { show: boolean }) {
+  const box = useRef<HTMLDivElement>(null);
+  useEffect(
+    () =>
+      world.onRing(({ x, y, r }) => {
+        const el = box.current;
+        if (!el || r <= 0) return;
+        const w = r * 1.3;
+        el.style.width = `${w}px`;
+        el.style.transform = `translate3d(${x - w / 2}px, ${y}px, 0) translateY(-50%)`;
+      }),
+    [],
+  );
+  if (!TITLE_SPONSOR) return null;
+  return (
+    <div ref={box} className="absolute left-0 top-0">
+      <AnimatePresence>
+        {show && (
+          <motion.a
+            key="sponsor"
+            href={TITLE_SPONSOR.href}
+            target="_blank"
+            rel="noreferrer"
+            className="pointer-events-auto flex flex-col items-center gap-[0.9em] text-stone-dim transition-colors duration-300 hover:text-stone"
+            initial={{ opacity: 0, y: 20, ...SOFT }}
+            animate={{ opacity: 1, y: 0, ...SHARP }}
+            exit={{ opacity: 0, y: -16, ...SOFT }}
+            transition={{ duration: 1, ease: EXPO }}
+          >
+            <img src={TITLE_SPONSOR.logo} alt={TITLE_SPONSOR.name} width={1192} height={264} className="w-full" />
+            <span className="meta" style={{ fontSize: 'clamp(0.9rem, 1.2vw, 1.1rem)' }}>
+              Title sponsor
+            </span>
+          </motion.a>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function Statement({ children }: { children: React.ReactNode }) {
   return (
     <motion.div
@@ -226,6 +273,26 @@ function Stack() {
         <p className="display mt-[10svh] text-[clamp(2rem,4vw,3.6rem)] text-stone">
           This time the tool <span className="text-brass-hi">reaches back.</span>
         </p>
+        {TITLE_SPONSOR && (
+          <a
+            href={TITLE_SPONSOR.href}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-[8svh] inline-flex flex-col items-start gap-4 text-stone-dim transition-colors duration-300 hover:text-stone"
+          >
+            <img
+              src={TITLE_SPONSOR.logo}
+              alt={TITLE_SPONSOR.name}
+              width={1192}
+              height={264}
+              loading="lazy"
+              className="w-[min(80vw,26rem)]"
+            />
+            <span className="meta" style={{ fontSize: 'clamp(0.9rem, 1.2vw, 1.1rem)' }}>
+              Title sponsor
+            </span>
+          </a>
+        )}
         {PHONE && <WaysIn className="mt-10" />}
       </div>
     </section>

@@ -10,7 +10,28 @@ const COVER: Record<string, string> = {
   competitions: '/gallery/robo_soccer.jpg',
   workshops: '/gallery/womenInCode.jpg',
   experiences: '/gallery/puzzle_event.jpg',
+  talks: '/gallery/actors_guest_talks.jpg',
+  proshows: '/gallery/proshow.jpg',
 };
+
+interface Arena {
+  id: string;
+  label: string;
+  blurb: string;
+  to?: string;
+  count?: number;
+}
+
+// the event categories, then the two arenas with nothing announced yet
+const ARENAS: Arena[] = [
+  ...CATEGORIES.map((c) => ({
+    ...c,
+    to: `/events?c=${c.id}`,
+    count: EVENTS.filter((e) => e.category === c.id).length,
+  })),
+  { id: 'talks', label: 'Talks', blurb: 'Speakers are revealed closer to the fest.' },
+  { id: 'proshows', label: 'Proshows', blurb: 'Three nights on the main stage. The line-up stays sealed.', to: '/proshows' },
+];
 
 // One row per category. Hovering one lights it and brings up its photo.
 export function Categories() {
@@ -28,29 +49,39 @@ export function Categories() {
         </div>
 
         <ul className="relative mt-14 border-b border-stone/12" onMouseLeave={() => setHot(null)}>
-          {CATEGORIES.map((c) => {
-            const n = EVENTS.filter((e) => e.category === c.id).length;
+          {ARENAS.map((c) => {
             const on = hot === c.id;
+            const row = 'group relative grid grid-cols-[1fr_auto] items-center gap-6 py-6 md:py-8';
+            const inner = (
+              <>
+                <span
+                  className={`display text-[clamp(1.75rem,4.6vw,4.25rem)] transition-[color,transform] duration-500 ease-out-expo ${
+                    hot && !on ? 'text-stone/25' : 'text-stone'
+                  } ${on ? 'translate-x-3 text-brass-hi' : ''}`}
+                >
+                  {c.label}
+                </span>
+                <span className="text-lift max-w-[26ch] text-right text-stone-dim">
+                  {c.count === undefined ? (
+                    <span className="block text-xl text-stone md:text-2xl">Coming soon</span>
+                  ) : (
+                    <span className="stencil block text-3xl text-stone">{String(c.count).padStart(2, '0')}</span>
+                  )}
+                  <span className="hidden md:block">{c.blurb}</span>
+                </span>
+              </>
+            );
             return (
               <li key={c.id} className="border-t border-stone/12">
-                <Link
-                  to={`/events?c=${c.id}`}
-                  onMouseEnter={() => setHot(c.id)}
-                  onFocus={() => setHot(c.id)}
-                  className="group relative grid grid-cols-[1fr_auto] items-center gap-6 py-6 md:py-8"
-                >
-                  <span
-                    className={`display text-[clamp(1.75rem,4.6vw,4.25rem)] transition-[color,transform] duration-500 ease-out-expo ${
-                      hot && !on ? 'text-stone/25' : 'text-stone'
-                    } ${on ? 'translate-x-3 text-brass-hi' : ''}`}
-                  >
-                    {c.label}
-                  </span>
-                  <span className="text-lift max-w-[26ch] text-right text-stone-dim">
-                    <span className="stencil block text-3xl text-stone">{String(n).padStart(2, '0')}</span>
-                    <span className="hidden md:block">{c.blurb}</span>
-                  </span>
-                </Link>
+                {c.to ? (
+                  <Link to={c.to} onMouseEnter={() => setHot(c.id)} onFocus={() => setHot(c.id)} className={row}>
+                    {inner}
+                  </Link>
+                ) : (
+                  <div onMouseEnter={() => setHot(c.id)} className={row}>
+                    {inner}
+                  </div>
+                )}
               </li>
             );
           })}

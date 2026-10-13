@@ -179,8 +179,9 @@ function HeroBody({ fx, exit, live }: { fx: Fx; exit: MotionValue<number>; live:
           </motion.div>
         </motion.div>
 
+        {/* from 1280px the countdown sits at the page's centre, between the dates and the actions */}
         <div
-          className={`mx-auto grid max-w-[1440px] gap-4 border-t border-brass-line px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 sm:px-8 md:grid-cols-[1fr_auto_auto] md:items-center md:gap-10 ${
+          className={`mx-auto grid max-w-[1440px] gap-4 border-t border-brass-line px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-4 sm:px-8 md:grid-cols-[1fr_auto_auto] md:items-center md:gap-10 xl:grid-cols-[1fr_auto_1fr] ${
             live ? 'pointer-events-auto' : 'pointer-events-none'
           }`}
         >
@@ -195,7 +196,7 @@ function HeroBody({ fx, exit, live }: { fx: Fx; exit: MotionValue<number>; live:
             <Countdown className="text-[clamp(2rem,4vw,3.2rem)]" />
           </motion.div>
 
-          <motion.div {...reveal(2.7)} className="flex flex-col gap-2 sm:flex-row">
+          <motion.div {...reveal(2.7)} className="flex flex-col gap-2 sm:flex-row xl:justify-self-end">
             <Link
               to="/events"
               className="inline-flex h-12 items-center justify-center gap-3 bg-stone px-6 text-[0.95rem] font-semibold text-void transition-colors duration-300 hover:bg-brass-hi"

@@ -284,7 +284,7 @@ const LIST: FestEvent[] = [
 
   // experiences
   {
-    id: 'chemistry-casino', title: 'Chemistry Casino', category: 'experiences', prize: 30000, fee: '₹399', note: 'Leaderboard runs all three days', clubs: ['alchemy'],
+    id: 'chemistry-casino', title: 'Chemistry Casino', category: 'experiences', prize: 30000, fee: '₹399', note: 'Leaderboard runs all three days', clubs: ['alchemy'], image: '/events/chemistry-casino.webp',
     about: 'Poker, blackjack and roulette with a pinch of chemistry. Buy in for chips; the best balance after three days takes the prize pool.',
   },
   {

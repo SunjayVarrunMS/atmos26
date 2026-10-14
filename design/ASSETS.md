@@ -25,7 +25,7 @@ Shaft-top stills `top.webp` (1280x800, from a 1600x1000 capture) and `top-portra
 
 ## Event images — `public/events/*.webp`
 - Only the events' own posters (WebP ≤ 300 KB, 900 px wide, any height), set per event as `image` in `src/data/events.ts`. An event without one shows no picture.
-- The first ten (14 Oct) come from the fest's Instagram posts (`instagram.com/p/<code>/media/?size=l`; Finding the Next Signal from @eco_assoc.bphc's collab post). The bottom strip with organisers' names and phone numbers is cropped off (AGENTS.md rule 3), then resized to 900 px wide at WebP quality 80. Chemistry Casino's post wouldn't download, so it has none yet.
+- The first eleven (14 Oct) come from the fest's Instagram posts (`instagram.com/p/<code>/media/?size=l`; Finding the Next Signal from @eco_assoc.bphc's collab post). The bottom strip with organisers' names and phone numbers is cropped off (AGENTS.md rule 3), then resized to 900 px wide at WebP quality 80. Chemistry Casino's post is visible only when logged in, so it was saved from the logged-in post page (1350 px original).
 - Generated stand-ins were made once (Z-Image-Turbo, `scripts/events/`) but never shipped; the site no longer falls back to them.
 
 ## Sponsor logos — `public/sponsors/*.webp`

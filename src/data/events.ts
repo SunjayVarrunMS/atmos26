@@ -65,7 +65,7 @@ export interface FestEvent {
   note?: string;
   /** organising club(s), joint events list more than one */
   clubs?: ClubSlug[];
-  /** the club's 4:3 poster in public/events/, once it arrives; no picture until then */
+  /** the event's poster in public/events/ (from the fest's Instagram, contacts cropped off); no picture until there is one */
   image?: string;
   /** day and time once confirmed, e.g. 'Sat 24 Oct, 10:00'; the page says "day TBA" until then */
   when?: string;
@@ -80,11 +80,11 @@ const LIST: FestEvent[] = [
     about: 'One of India’s premier case competitions, with KPMG as knowledge partner. Three rounds of real-world business problems end with a pitch to a panel of industry leaders.',
   },
   {
-    id: 'robowars', title: 'Robowars', category: 'competitions', prize: 195000, fee: '₹700', note: '15 kg, 8 kg and 1.5 kg classes', clubs: ['phoenix'], when: 'Sat 24 – Sun 25 Oct',
+    id: 'robowars', title: 'Robowars', category: 'competitions', prize: 195000, fee: '₹700', note: '15 kg, 8 kg and 1.5 kg classes', clubs: ['phoenix'], image: '/events/robowars.webp', when: 'Sat 24 – Sun 25 Oct',
     about: 'One-on-one combat between robots with active weapons, in a losers’-bracket format for each weight class. Winners take ₹57,500 (15 kg), ₹42,500 (8 kg) and ₹20,000 (1.5 kg).',
   },
   {
-    id: 'robo-soccer', title: 'Robo Soccer', category: 'competitions', prize: 10000, fee: '₹200 per bot', note: '5 kg robots', clubs: ['phoenix'], when: 'Sat 24 – Sun 25 Oct',
+    id: 'robo-soccer', title: 'Robo Soccer', category: 'competitions', prize: 10000, fee: '₹200 per bot', note: '5 kg robots', clubs: ['phoenix'], image: '/events/robo-soccer.webp', when: 'Sat 24 – Sun 25 Oct',
     about: 'Robots play football: speed, precision and teamwork in a single-elimination bracket.',
   },
   {
@@ -108,7 +108,7 @@ const LIST: FestEvent[] = [
     about: 'A live virtual trading floor: same starting money, random stocks, and a stream of fake breaking news. Three 30-minute rounds; the top three portfolios win.',
   },
   {
-    id: 'next-signal', title: 'Finding the Next Signal', category: 'competitions', prize: 40000, fee: '₹599', note: 'Quant research hackathon · Sponsored by Signal1', clubs: ['wall-street', 'economics-association'],
+    id: 'next-signal', title: 'Finding the Next Signal', category: 'competitions', prize: 40000, fee: '₹599', note: 'Quant research hackathon · Sponsored by Signal1', clubs: ['wall-street', 'economics-association'], image: '/events/next-signal.webp',
     about: 'Build an autonomous research agent that digs through a NIFTY 50 company’s filings and news to find a non-obvious, evidence-backed insight. Top teams get pre-placement interviews.',
   },
   {
@@ -156,7 +156,7 @@ const LIST: FestEvent[] = [
     about: 'A quiz on everything engines: combustion and propulsion, iconic machines, motorsport history and the future of mobility.',
   },
   {
-    id: 'flood-risk', title: 'Urban Flood Risk Prediction Challenge', category: 'competitions', prize: 10000, fee: '₹200', note: 'Online ML hackathon · Judged on Kaggle', clubs: ['cea'], when: 'Sat 24 – Sun 25 Oct',
+    id: 'flood-risk', title: 'Urban Flood Risk Prediction Challenge', category: 'competitions', prize: 10000, fee: '₹200', note: 'Online ML hackathon · Judged on Kaggle', clubs: ['cea'], image: '/events/flood-risk.webp', when: 'Sat 24 – Sun 25 Oct',
     about: 'Predict flood risk for unseen locations from terrain, drainage, land-use and rainfall data, scored live on a Kaggle leaderboard.',
   },
   {
@@ -176,7 +176,7 @@ const LIST: FestEvent[] = [
     about: 'Work together through maths puzzles to defuse the bomb.',
   },
   {
-    id: 'concrete-bowling', title: 'Concrete Bowling', category: 'competitions', prize: 6000, fee: '₹200', note: 'At the Central Workshop', clubs: ['cea'], when: 'Fri 23 – Sun 25 Oct',
+    id: 'concrete-bowling', title: 'Concrete Bowling', category: 'competitions', prize: 6000, fee: '₹200', note: 'At the Central Workshop', clubs: ['cea'], image: '/events/concrete-bowling.webp', when: 'Fri 23 – Sun 25 Oct',
     about: 'Standard bowling rules with cast concrete balls and pins. Scores are ranked through the fest; the highest win.',
   },
   {
@@ -242,7 +242,7 @@ const LIST: FestEvent[] = [
     about: 'Financial markets and instruments, investment strategy and decision-making, with practical examples.',
   },
   {
-    id: 'semiconductor', title: 'Semiconductor Workshop', category: 'workshops', prize: null, fee: '₹599', note: 'With CREST · Clean room visit', clubs: ['alchemy'],
+    id: 'semiconductor', title: 'Semiconductor Workshop', category: 'workshops', prize: null, fee: '₹599', note: 'With CREST · Clean room visit', clubs: ['alchemy'], image: '/events/semiconductor.webp',
     about: 'An interactive, practical workshop hosted by a BITS professor, including a visit to the clean room.',
   },
   {
@@ -270,11 +270,11 @@ const LIST: FestEvent[] = [
     about: 'An introduction to GPU architecture and NVIDIA’s CUDA platform. No prior experience needed.',
   },
   {
-    id: 'exoplanet-detection', title: 'Exoplanet Detection Workshop', category: 'workshops', prize: null, fee: '₹249', clubs: ['ad-astra'], when: 'Sat 24 Oct, 14:00–18:00',
+    id: 'exoplanet-detection', title: 'Exoplanet Detection Workshop', category: 'workshops', prize: null, fee: '₹249', clubs: ['ad-astra'], image: '/events/exoplanet-detection.webp', when: 'Sat 24 Oct, 14:00–18:00',
     about: 'Decode real mission data and build a detection pipeline to spot planets light-years away.',
   },
   {
-    id: 'perfume', title: 'Make Your Own Perfume', category: 'workshops', prize: null, fee: '₹249', clubs: ['alchemy'],
+    id: 'perfume', title: 'Make Your Own Perfume', category: 'workshops', prize: null, fee: '₹249', clubs: ['alchemy'], image: '/events/perfume.webp',
     about: 'Pick from over 12 fragrances and take home your own 10 ml bottle.',
   },
   {
@@ -288,11 +288,11 @@ const LIST: FestEvent[] = [
     about: 'Poker, blackjack and roulette with a pinch of chemistry. Buy in for chips; the best balance after three days takes the prize pool.',
   },
   {
-    id: 'stargazing', title: 'Stargazing', category: 'experiences', prize: null, fee: '₹149', clubs: ['ad-astra'], when: 'Fri 23 Oct, 22:00',
+    id: 'stargazing', title: 'Stargazing', category: 'experiences', prize: null, fee: '₹149', clubs: ['ad-astra'], image: '/events/stargazing.webp', when: 'Fri 23 Oct, 22:00',
     about: 'Saturn’s rings, Jupiter’s moons, lunar craters and distant star clusters through a Celestron Schmidt-Cassegrain and an 8-inch Dobsonian.',
   },
   {
-    id: 'solar-gazing', title: 'Solaris Surge', category: 'experiences', prize: null, fee: '₹99', note: 'Solar gazing', clubs: ['ad-astra'], when: 'Sat 24 Oct, 10:00–13:00',
+    id: 'solar-gazing', title: 'Solaris Surge', category: 'experiences', prize: null, fee: '₹99', note: 'Solar gazing', clubs: ['ad-astra'], image: '/events/solar-gazing.webp', when: 'Sat 24 Oct, 10:00–13:00',
     about: 'Observe the Sun safely through filtered telescopes and track sunspot clusters.',
   },
   {

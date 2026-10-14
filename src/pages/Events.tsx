@@ -154,10 +154,10 @@ export default function Events() {
                         <img
                           src={e.image}
                           alt=""
-                          width={960}
-                          height={720}
+                          width={900}
+                          height={675}
                           loading="lazy"
-                          className="duotone mb-6 aspect-[4/3] w-full object-cover transition-[filter] duration-700 ease-out-expo group-hover:[filter:none]"
+                          className="duotone mb-6 aspect-[4/3] w-full object-cover object-top transition-[filter] duration-700 ease-out-expo group-hover:[filter:none]"
                         />
                       )}
                       <div className="flex items-start justify-between gap-4 text-[0.9rem] text-stone-dim">

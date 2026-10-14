@@ -55,51 +55,67 @@ export default function Event() {
             ))}
           </dl>
 
-          {event.about && <p className="mt-10 max-w-[60ch] text-[1.05rem] leading-relaxed text-stone-dim">{event.about}</p>}
+          <div className={event.image ? 'md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] md:gap-16' : ''}>
+            <div>
+              {event.about && <p className="mt-10 max-w-[60ch] text-[1.05rem] leading-relaxed text-stone-dim">{event.about}</p>}
 
-          {event.clubs && (
-            <div className="mt-10">
-              <h2 className="text-stone-mute">Organised by</h2>
-              <ul className="mt-4 flex flex-col gap-4">
-                {event.clubs.map((slug) => (
-                  <li key={slug}>
-                    <a
-                      href={clubUrl(slug)}
-                      target="_blank"
-                      rel="noopener"
-                      className="group inline-flex items-center gap-3 text-stone underline-offset-4 hover:underline focus-visible:underline"
-                    >
-                      {CLUBS[slug].logo && (
-                        <img
-                          src={CLUBS[slug].logo}
-                          alt=""
-                          width={40}
-                          height={40}
-                          className="duotone size-10 shrink-0 rounded-full transition-[filter] duration-700 ease-out-expo group-hover:[filter:none]"
-                        />
-                      )}
-                      <span>
-                        {CLUBS[slug].name}
-                        <span className="block text-stone-dim">{CLUBS[slug].tagline}</span>
-                      </span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
+              {event.clubs && (
+                <div className="mt-10">
+                  <h2 className="text-stone-mute">Organised by</h2>
+                  <ul className="mt-4 flex flex-col gap-4">
+                    {event.clubs.map((slug) => (
+                      <li key={slug}>
+                        <a
+                          href={clubUrl(slug)}
+                          target="_blank"
+                          rel="noopener"
+                          className="group inline-flex items-center gap-3 text-stone underline-offset-4 hover:underline focus-visible:underline"
+                        >
+                          {CLUBS[slug].logo && (
+                            <img
+                              src={CLUBS[slug].logo}
+                              alt=""
+                              width={40}
+                              height={40}
+                              className="duotone size-10 shrink-0 rounded-full transition-[filter] duration-700 ease-out-expo group-hover:[filter:none]"
+                            />
+                          )}
+                          <span>
+                            {CLUBS[slug].name}
+                            <span className="block text-stone-dim">{CLUBS[slug].tagline}</span>
+                          </span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div className="mt-14 flex flex-wrap items-center gap-3">
+                <PassesButton />
+                <button
+                  type="button"
+                  onClick={share}
+                  aria-live="polite"
+                  className="inline-flex h-12 items-center justify-center gap-2 px-4 text-[0.95rem] font-semibold text-stone-dim transition-colors hover:text-stone"
+                >
+                  <Share2 className="size-4" strokeWidth={1.5} aria-hidden />
+                  {copied ? 'Link copied' : 'Share'}
+                </button>
+              </div>
             </div>
-          )}
 
-          <div className="mt-14 flex flex-wrap items-center gap-3">
-            <PassesButton />
-            <button
-              type="button"
-              onClick={share}
-              aria-live="polite"
-              className="inline-flex h-12 items-center justify-center gap-2 px-4 text-[0.95rem] font-semibold text-stone-dim transition-colors hover:text-stone"
-            >
-              <Share2 className="size-4" strokeWidth={1.5} aria-hidden />
-              {copied ? 'Link copied' : 'Share'}
-            </button>
+            {event.image && (
+              <div className="group mt-14 max-w-[24rem] md:mt-10">
+                <img
+                  src={event.image}
+                  alt={`${event.title} poster`}
+                  width={900}
+                  height={1200}
+                  className="duotone h-auto w-full transition-[filter] duration-700 ease-out-expo group-hover:[filter:none]"
+                />
+              </div>
+            )}
           </div>
 
           <Link

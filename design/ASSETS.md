@@ -24,7 +24,8 @@ Shaft-top stills `top.webp` (1280x800, from a 1600x1000 capture) and `top-portra
 - `scripts/blender/era_shapes.py` (Blender 5.2, headless: `blender -b --factory-startup -P scripts/blender/era_shapes.py`) models hands (from `design/source/rigged_lowpoly_hand.glb`), pocket watch, locomotive, circuit-board city, DNA, brain and concentric rings procedurally, samples 12,000 surface points each (int16 xyz). Reference GLBs land in `design/3d/`. Only `halo.bin` (the logo's ring, from `scripts/halo_points.py`) is used by the Ascension, for the summit.
 
 ## Event images — `public/events/*.webp`
-- Only the clubs' own posters (4:3, WebP ≤ 300 KB), set per event as `image` in `src/data/events.ts`. An event without one shows no picture.
+- Only the events' own posters (WebP ≤ 300 KB, 900 px wide, any height), set per event as `image` in `src/data/events.ts`. An event without one shows no picture.
+- The first ten (14 Oct) come from the fest's Instagram posts (`instagram.com/p/<code>/media/?size=l`; Finding the Next Signal from @eco_assoc.bphc's collab post). The bottom strip with organisers' names and phone numbers is cropped off (AGENTS.md rule 3), then resized to 900 px wide at WebP quality 80. Chemistry Casino's post wouldn't download, so it has none yet.
 - Generated stand-ins were made once (Z-Image-Turbo, `scripts/events/`) but never shipped; the site no longer falls back to them.
 
 ## Sponsor logos — `public/sponsors/*.webp`

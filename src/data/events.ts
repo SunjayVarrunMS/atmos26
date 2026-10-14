@@ -1,5 +1,5 @@
 // The ATMOS '26 line-up, from the events on the Flemmingo registration page and
-// the DEPP club sheet (14 Oct). Flemmingo's ticket prices are final; events it
+// the DEPP club sheet (14 Oct), plus days and venues from the fest's Instagram posts (13 Oct). Flemmingo's ticket prices are final; events it
 // doesn't list keep the sheet's outside-participant price. Where these disagree
 // with the printed brochure, they win: it was set from an older sheet. Days and team sizes stay "TBA" until the club
 // confirms them. Club names and taglines are from SU Connect; no contacts.
@@ -156,7 +156,7 @@ const LIST: FestEvent[] = [
     about: 'A quiz on everything engines: combustion and propulsion, iconic machines, motorsport history and the future of mobility.',
   },
   {
-    id: 'flood-risk', title: 'Urban Flood Risk Prediction Challenge', category: 'competitions', prize: 10000, fee: '₹200', note: 'ML hackathon', clubs: ['cea'],
+    id: 'flood-risk', title: 'Urban Flood Risk Prediction Challenge', category: 'competitions', prize: 10000, fee: '₹200', note: 'Online ML hackathon · Judged on Kaggle', clubs: ['cea'], when: 'Sat 24 – Sun 25 Oct',
     about: 'Predict flood risk for unseen locations from terrain, drainage, land-use and rainfall data, scored live on a Kaggle leaderboard.',
   },
   {
@@ -176,7 +176,7 @@ const LIST: FestEvent[] = [
     about: 'Work together through maths puzzles to defuse the bomb.',
   },
   {
-    id: 'concrete-bowling', title: 'Concrete Bowling', category: 'competitions', prize: 6000, fee: '₹200', clubs: ['cea'],
+    id: 'concrete-bowling', title: 'Concrete Bowling', category: 'competitions', prize: 6000, fee: '₹200', note: 'At the Central Workshop', clubs: ['cea'], when: 'Fri 23 – Sun 25 Oct',
     about: 'Standard bowling rules with cast concrete balls and pins. Scores are ranked through the fest; the highest win.',
   },
   {
@@ -270,7 +270,7 @@ const LIST: FestEvent[] = [
     about: 'An introduction to GPU architecture and NVIDIA’s CUDA platform. No prior experience needed.',
   },
   {
-    id: 'exoplanet-detection', title: 'Exoplanet Detection Workshop', category: 'workshops', prize: null, fee: '₹249', clubs: ['ad-astra'],
+    id: 'exoplanet-detection', title: 'Exoplanet Detection Workshop', category: 'workshops', prize: null, fee: '₹249', clubs: ['ad-astra'], when: 'Sat 24 Oct, 14:00–18:00',
     about: 'Decode real mission data and build a detection pipeline to spot planets light-years away.',
   },
   {
@@ -288,11 +288,11 @@ const LIST: FestEvent[] = [
     about: 'Poker, blackjack and roulette with a pinch of chemistry. Buy in for chips; the best balance after three days takes the prize pool.',
   },
   {
-    id: 'stargazing', title: 'Stargazing', category: 'experiences', prize: null, fee: '₹149', clubs: ['ad-astra'],
+    id: 'stargazing', title: 'Stargazing', category: 'experiences', prize: null, fee: '₹149', clubs: ['ad-astra'], when: 'Fri 23 Oct, 22:00',
     about: 'Saturn’s rings, Jupiter’s moons, lunar craters and distant star clusters through a Celestron Schmidt-Cassegrain and an 8-inch Dobsonian.',
   },
   {
-    id: 'solar-gazing', title: 'Solaris Surge', category: 'experiences', prize: null, fee: '₹99', note: 'Solar gazing', clubs: ['ad-astra'],
+    id: 'solar-gazing', title: 'Solaris Surge', category: 'experiences', prize: null, fee: '₹99', note: 'Solar gazing', clubs: ['ad-astra'], when: 'Sat 24 Oct, 10:00–13:00',
     about: 'Observe the Sun safely through filtered telescopes and track sunspot clusters.',
   },
   {

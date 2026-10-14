@@ -247,7 +247,7 @@ Plain, heavy rectangles that read like a title card rather than an interface.
 - **Shape:** square corners (0px), 48px tall, 24px side padding (28px on the closing pair).
 - **Primary:** a solid stone fill with void text, weight 600, 0.95rem, sentence case ("Explore events"). In the hero it carries a thin 20px drawn right-arrow.
 - **Hover / Focus:** the fill changes to brass-hi over 300ms. Focus is the global 1px signal-cyan outline at a 4px offset.
-- **Secondary:** a 1px stone/35 outline with stone text. On hover, the border turns brass and the text brass-hi. While registration is closed, the secondary is the passes button: it reads "Passes: opening soon", and when clicked it says where passes will drop instead of linking nowhere.
+- **Secondary:** a 1px stone/35 outline with stone text. On hover, the border turns brass and the text brass-hi. The secondary is usually the registration button: it reads "Register" and opens Flemmingo in a new tab. If registration is ever closed, it reads "Passes: opening soon" and when clicked says where passes will drop instead of linking nowhere.
 - **Pairing:** primary first, secondary second, 12px apart. On phones they stack at full width.
 
 ### Filter tabs

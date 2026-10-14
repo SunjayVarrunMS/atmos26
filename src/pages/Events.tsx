@@ -233,7 +233,7 @@ export default function Events() {
 
           <div className="mt-24 flex flex-col items-start gap-6 border-t border-stone/12 pt-10 md:flex-row md:items-center md:justify-between">
             <p className="display max-w-[20ch] text-[clamp(1.7rem,2.6vw,2.2rem)] text-stone">
-              One pass. <span className="text-brass-hi">Every arena.</span>
+              One link. <span className="text-brass-hi">Every event.</span>
             </p>
             <PassesButton />
           </div>

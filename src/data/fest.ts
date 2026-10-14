@@ -16,8 +16,8 @@ export const FEST = {
     { date: '24', weekday: 'Sat', month: 'Oct' },
     { date: '25', weekday: 'Sun', month: 'Oct' },
   ],
-  // registration isn't open yet; flip this and set the url when it is
-  registration: { open: false, url: '' as string },
+  // registration runs on Flemmingo, the "Registration link" in the fest's Instagram bio
+  registration: { open: true, url: 'https://flemmingo.in/fests/cmv5ldlzu0000lb06f8nmef17' as string },
   coordinates: { lat: 17.5449, lng: 78.5718 },
   // absolute links for share cards; WhatsApp and Instagram ignore relative ones
   url: 'https://atmos26.vercel.app',

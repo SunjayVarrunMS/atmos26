@@ -67,7 +67,7 @@ export function BottomNav({ hidden }: { hidden: boolean }) {
             className="flex w-24 shrink-0 flex-col items-center justify-center gap-1 bg-stone px-5 text-[0.72rem] font-medium text-void transition-colors hover:bg-brass-hi"
           >
             <Ticket className="size-5" strokeWidth={1.5} aria-hidden />
-            <span>Passes</span>
+            <span>Register</span>
           </a>
         ) : (
           <button

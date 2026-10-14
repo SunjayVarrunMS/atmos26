@@ -25,7 +25,7 @@ ATMOS '26's theme is **"Augmented Ascension — The Transitional Convergence"**:
 - Stack: Vite + React 19 + TypeScript + Tailwind v4 + three.js (raw) + postprocessing + framer-motion + Lenis, multi-page via react-router.
 - The home page is the Ascension: a scroll-driven WebGL world with one machine per era. Weak devices and reduced motion get rendered stills instead; the logo, countdown and facts always paint first.
 - Pages: Home, Events (filterable by category), Proshows, Gallery, Sponsors, Contact, 404.
-- **Registration is not open yet**: "Get Passes" / "Register" show "Registrations opening soon" until a real URL is supplied.
+- **Registration is open** on Flemmingo (`FEST.registration.url`, the "Registration link" in the fest's Instagram bio). Every "Register" button links there.
 - Event list, proshow artists and sponsors are placeholders until the team provides them.
 - Proshow nights carry codenames written by the site team (Signal, Circuit, Ascension) as sealed-dossier placeholders; they are not artist or event claims and get replaced when the line-up is announced.
 
@@ -38,7 +38,7 @@ ATMOS '26's theme is **"Augmented Ascension — The Transitional Convergence"**:
 - Stats from previous editions: 30,000+ footfall, 40+ events, ₹12L+ prize pool, 150+ colleges.
 - Past-edition photos: `public/gallery/*` (11 images).
 - Contact: atmos@hyderabad.bits-pilani.ac.in · Instagram @atmos_bitshyd. No phone number on the site (team decision). Events name their organising club (name + SU Connect tagline), never people or contacts.
-- Absent (do not fabricate): 2026 event list, proshow artists, sponsors, testimonials, registration URL, pass prices.
+- Absent (do not fabricate): 2026 event list, proshow artists, sponsors, testimonials, pass prices.
 
 ## Product Principles
 1. The logo is the hero; everything else frames it.

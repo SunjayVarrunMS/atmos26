@@ -3,7 +3,8 @@ import { Link, useParams } from 'react-router';
 import { ArrowLeft, Share2 } from 'lucide-react';
 import { PageHeader } from '../components/PageHeader';
 import { PassesButton } from '../components/PassesButton';
-import { CATEGORIES, CLUBS, EVENTS, clubUrl, formatPrize } from '../data/events';
+import { CATEGORIES, CLUBS, clubUrl, formatPrize } from '../data/events';
+import { useEvent } from '../data/eventEdits';
 import { FEST } from '../data/fest';
 import NotFound from './NotFound';
 
@@ -12,7 +13,7 @@ import NotFound from './NotFound';
 // (see eventPages in vite.config.ts).
 export default function Event() {
   const { id } = useParams();
-  const event = EVENTS.find((e) => e.id === id);
+  const event = useEvent(id);
   const [copied, setCopied] = useState(false);
 
   if (!event) return <NotFound />;
@@ -23,6 +24,7 @@ export default function Event() {
     { label: 'Entry', value: event.fee },
     { label: 'Team size', value: event.team ?? 'TBA' },
     { label: 'When', value: event.when ?? `${FEST.days[0].date}–${FEST.days[2].date} Oct, day TBA` },
+    { label: 'Venue', value: event.venue ?? 'TBA' },
   ];
 
   const share = async () => {
@@ -46,7 +48,7 @@ export default function Event() {
 
       <section className="px-4 pb-24 sm:px-8" aria-label="Details">
         <div className="mx-auto max-w-[1440px]">
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-8 border-y border-stone/12 py-8 md:grid-cols-4">
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-8 border-y border-stone/12 py-8 md:grid-cols-3 lg:grid-cols-5">
             {facts.map((f) => (
               <div key={f.label}>
                 <dt className="text-stone-mute">{f.label}</dt>

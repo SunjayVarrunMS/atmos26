@@ -16,6 +16,7 @@ const router = createBrowserRouter([
       { path: 'gallery', lazy: async () => ({ Component: (await import('./pages/Gallery')).default }) },
       { path: 'sponsors', lazy: async () => ({ Component: (await import('./pages/Sponsors')).default }) },
       { path: 'contact', lazy: async () => ({ Component: (await import('./pages/Contact')).default }) },
+      { path: 'manage', lazy: async () => ({ Component: (await import('./pages/Manage')).default }) },
       { path: '*', lazy: async () => ({ Component: (await import('./pages/NotFound')).default }) },
     ],
   },

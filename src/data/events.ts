@@ -69,6 +69,8 @@ export interface FestEvent {
   image?: string;
   /** day and time once confirmed, e.g. 'Sat 24 Oct, 10:00'; the page says "day TBA" until then */
   when?: string;
+  /** where it happens, e.g. 'F-block, lecture hall 105'; set by the club on /manage */
+  venue?: string;
   /** one or two plain sentences from the organisers about the event */
   about?: string;
 }

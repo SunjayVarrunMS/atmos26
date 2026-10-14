@@ -4,7 +4,8 @@ import { LayoutGroup, motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight, Search } from 'lucide-react';
 import { PageHeader } from '../components/PageHeader';
 import { PassesButton } from '../components/PassesButton';
-import { CATEGORIES, CLUBS, EVENTS, feeValue, formatPrize, isCategory, type Category } from '../data/events';
+import { useEvents } from '../data/eventEdits';
+import { CATEGORIES, CLUBS, feeValue, formatPrize, isCategory, type Category } from '../data/events';
 
 const EXPO = [0.16, 1, 0.3, 1] as const;
 
@@ -12,6 +13,7 @@ type Sort = 'prize' | 'az' | 'fee';
 const isSort = (v: string | null): v is Sort => v === 'prize' || v === 'az' || v === 'fee';
 
 export default function Events() {
+  const events = useEvents();
   const [params, setParams] = useSearchParams();
   const raw = params.get('c');
   const active: Category | 'all' = isCategory(raw) ? raw : 'all';
@@ -24,7 +26,7 @@ export default function Events() {
   const list = useMemo(() => {
     const needle = q.trim().toLowerCase();
     const byTitle = (a: { title: string }, b: { title: string }) => a.title.localeCompare(b.title);
-    const found = EVENTS.filter((e) => active === 'all' || e.category === active).filter(
+    const found = events.filter((e) => active === 'all' || e.category === active).filter(
       (e) =>
         !needle ||
         e.title.toLowerCase().includes(needle) ||
@@ -38,7 +40,7 @@ export default function Events() {
       const fb = feeValue(b.fee);
       return (fa === fb ? 0 : fa - fb) || byTitle(a, b);
     });
-  }, [active, q, sort]);
+  }, [events, active, q, sort]);
 
   const update = (key: 'c' | 'q' | 's', value: string, fallback: string) => {
     const next = new URLSearchParams(params);
@@ -64,7 +66,7 @@ export default function Events() {
                   {(['all', ...CATEGORIES.map((c) => c.id)] as const).map((c) => {
                     const on = c === active;
                     const label = c === 'all' ? 'All' : CATEGORIES.find((x) => x.id === c)!.label;
-                    const n = c === 'all' ? EVENTS.length : EVENTS.filter((e) => e.category === c).length;
+                    const n = c === 'all' ? events.length : events.filter((e) => e.category === c).length;
                     return (
                       <button
                         key={c}
@@ -214,6 +216,12 @@ export default function Events() {
                               <div>
                                 <dt className="text-[0.85rem] text-stone-mute">When</dt>
                                 <dd className="mt-0.5 text-[1.05rem] text-stone">{e.when}</dd>
+                              </div>
+                            )}
+                            {e.venue && (
+                              <div>
+                                <dt className="text-[0.85rem] text-stone-mute">Where</dt>
+                                <dd className="mt-0.5 text-[1.05rem] text-stone">{e.venue}</dd>
                               </div>
                             )}
                           </dl>

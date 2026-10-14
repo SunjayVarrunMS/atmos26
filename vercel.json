@@ -3,5 +3,5 @@
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "rewrites": [{ "source": "/(events|proshows|gallery|sponsors|contact)", "destination": "/index.html" }]
+  "rewrites": [{ "source": "/(events|proshows|gallery|sponsors|contact|manage)", "destination": "/index.html" }]
 }

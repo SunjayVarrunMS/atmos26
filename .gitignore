@@ -35,6 +35,7 @@ design/logo/layers/
 .recording/
 .vercel
 .env*
+!.env.example
 
 # raw Blender exports (packed copies ship; see scripts/blender/world_chambers.py)
 public/world/*.raw.glb
@@ -42,3 +43,6 @@ __pycache__/
 
 # AI hand-off files
 .ai/
+
+# Supabase SQL with real emails (allowlist), run by hand, never committed
+supabase/.local/

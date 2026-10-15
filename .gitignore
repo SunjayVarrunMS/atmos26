@@ -46,3 +46,4 @@ __pycache__/
 
 # Supabase SQL with real emails (allowlist), run by hand, never committed
 supabase/.local/
+supabase/.temp/

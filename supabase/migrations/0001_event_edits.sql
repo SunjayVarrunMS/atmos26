@@ -19,16 +19,26 @@ create table public.editors (
 
 alter table public.editors enable row level security;
 
+-- the caller's Google email(s). Definer because authenticated can't read
+-- auth.identities; it only ever answers for the caller.
+create function public.my_google_emails()
+returns setof text
+language sql
+stable
+security definer set search_path = ''
+as $$
+  select lower(i.identity_data ->> 'email')
+  from auth.identities i
+  where i.user_id = (select auth.uid()) and i.provider = 'google';
+$$;
+
+revoke execute on function public.my_google_emails() from public, anon;
+grant  execute on function public.my_google_emails() to authenticated;
+
 -- a signed-in editor sees only their own rows, so /manage knows which clubs to show
 create policy editors_read_own on public.editors
   for select to authenticated
-  using (
-    email in (
-      select lower(i.identity_data ->> 'email')
-      from auth.identities i
-      where i.user_id = (select auth.uid()) and i.provider = 'google'
-    )
-  );
+  using (email in (select public.my_google_emails()));
 
 -- ---------------------------------------------------------------------------
 -- event_clubs: which club runs which event, mirrored from events.ts by

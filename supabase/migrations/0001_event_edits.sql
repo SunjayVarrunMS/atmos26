@@ -90,7 +90,7 @@ grant  execute on function public.can_edit_event(text) to authenticated;
 
 -- ---------------------------------------------------------------------------
 -- has_contact: the site carries no phone numbers, people's emails or handles,
--- and no outside links (AGENTS.md rules 3 and 4). The form checks the same.
+-- and no outside links. The form checks the same.
 -- ---------------------------------------------------------------------------
 create function public.has_contact(t text)
 returns boolean

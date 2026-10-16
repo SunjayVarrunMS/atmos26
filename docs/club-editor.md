@@ -5,7 +5,7 @@ Club PORs keep their own events current at `atmos-bits.com/manage`: venue, day a
 How it fits together:
 - `src/data/events.ts` stays the base. Supabase holds only the overrides (`event_edits`). The site lays them over `EVENTS` after the first render (`src/data/eventEdits.ts`). If Supabase is down or the env vars are missing, the site shows `events.ts` as it is.
 - Sign-in is Google only. An account can edit an event only if its email is in `editors` with one of that event's club slugs. The database enforces this (RLS in `supabase/migrations/0001_event_edits.sql`), not the browser.
-- The database refuses phone numbers, emails, @handles and links in any field (AGENTS.md rules 3 and 4). The form checks the same before saving.
+- The database refuses phone numbers, emails, @handles and links in any field (the site carries no phone numbers or outside links). The form checks the same before saving.
 - Posters are resized to WebP in the browser (≤ 1200 px wide, about 300 KB) and stored in the public `posters` bucket under `<event_id>/`.
 
 ## One-time setup

@@ -25,7 +25,7 @@ How it fits together:
 
 ## Day to day
 
-- **A new POR or club account:** insert a row into `editors`. To remove access, delete the row. The account can still sign in but can't save anything.
+- **A new POR or club account:** insert a row into `editors`, and add the same address as a test user in Google Cloud → Google Auth Platform → Audience. The Google app stays in Testing (publishing needs a privacy policy page), so only test users can sign in (up to 100), and each sees a one-time "Google hasn't verified this app" screen. To remove access, delete the `editors` row. The account can still sign in but can't save anything.
 - **A new event in `events.ts`:** re-run step 2, so its club can edit it. If an event with saved edits is renamed or removed, the seed's delete stops with an error rather than dropping the club's edits. Move or delete that `event_edits` row first.
 - **Undo a bad edit:** in the Table editor, open `event_edits` and clear the field or delete the row. The site falls back to `events.ts`.
 - **Share cards** (`/events/<id>` previews on WhatsApp and Instagram) are built from `events.ts` at deploy time, so a POR's edit doesn't change them until the facts are copied into `events.ts`.

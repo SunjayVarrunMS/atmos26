@@ -134,7 +134,7 @@ const LIST: FestEvent[] = [
     about: 'A cybersecurity tournament across web, crypto, reversing, pwn and forensics. Open online; prize money is for registrants only.',
   },
   {
-    id: 'coinquest', title: 'Coinquest', category: 'competitions', prize: 25000, fee: '₹99', clubs: ['blocksoc', 'traders'],
+    id: 'coinquest', title: 'Coinquest', category: 'competitions', prize: 20000, fee: '₹99', clubs: ['blocksoc', 'traders'],
     about: 'A beginner-friendly mock crypto trading competition with virtual funds, real market conditions and a live leaderboard.',
   },
   {
@@ -142,7 +142,7 @@ const LIST: FestEvent[] = [
     about: 'The Economics Association’s flagship quiz on economics, finance and current affairs. Three elimination rounds, open to every discipline.',
   },
   {
-    id: 'enigma', title: 'Enigma', category: 'competitions', prize: 20000, fee: 'Free', team: '1–4', clubs: ['blocksoc'],
+    id: 'enigma', title: 'Enigma', category: 'competitions', prize: 10000, fee: '₹200', team: '1–4', clubs: ['blocksoc'],
     about: 'A blockchain strategy simulation: build, secure and govern your own network through forks, attacks and governance dilemmas.',
   },
   {
@@ -280,7 +280,7 @@ const LIST: FestEvent[] = [
     about: 'Pick from over 12 fragrances and take home your own 10 ml bottle.',
   },
   {
-    id: 'code-the-chain', title: 'Code the Chain', category: 'workshops', prize: null, fee: 'Free', note: 'Web3 workshop', clubs: ['blocksoc'],
+    id: 'code-the-chain', title: 'Code the Chain', category: 'workshops', prize: null, fee: '₹450', note: 'Web3 workshop', clubs: ['blocksoc'],
     about: 'Web3 from the ground up: smart contracts, wallets and dApps, then build and deploy a small project to a testnet with mentors on hand.',
   },
 

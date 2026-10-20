@@ -17,6 +17,28 @@ const FIELDS: { key: Field; label: string; placeholder: string }[] = [
   { key: 'team', label: 'Team size', placeholder: 'e.g. 2–4, or Solo' },
 ];
 
+function withTimeout<T>(p: PromiseLike<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('timeout')), ms);
+    p.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (reason: unknown) => {
+        clearTimeout(timer);
+        reject(reason instanceof Error ? reason : new Error(String(reason)));
+      },
+    );
+  });
+}
+
+function looksOffline(err: unknown): boolean {
+  const name = err instanceof Error ? err.name : '';
+  const message = err && typeof err === 'object' && 'message' in err ? String(err.message) : String(err);
+  return name === 'AbortError' || name === 'TimeoutError' || /fetch|network|abort|timeout/i.test(message);
+}
+
 export function EventEditor({
   event,
   edit,
@@ -96,9 +118,12 @@ export function EventEditor({
       let imagePath = edit?.image_path ?? null;
       if (blob) {
         const path = `${event.id}/${Date.now()}.webp`;
-        const up = await supabase.storage
-          .from('posters')
-          .upload(path, blob, { contentType: 'image/webp', cacheControl: '31536000', upsert: false });
+        const up = await withTimeout(
+          supabase.storage
+            .from('posters')
+            .upload(path, blob, { contentType: 'image/webp', cacheControl: '31536000', upsert: false }),
+          45000,
+        );
         if (up.error) {
           setError(`The poster didn't upload: ${up.error.message}`);
           return;
@@ -108,25 +133,31 @@ export function EventEditor({
 
       // a field left as events.ts has it isn't stored, so later fixes to events.ts still show
       const changed = (key: Field) => (clean[key] === '' || clean[key] === (event[key] ?? '') ? null : clean[key]);
-      const { data, error: err } = await supabase
-        .from('event_edits')
-        .upsert(
-          {
-            event_id: event.id,
-            venue: changed('venue'),
-            when: changed('when'),
-            team: changed('team'),
-            about: changed('about'),
-            image_path: imagePath,
-          },
-          { onConflict: 'event_id' },
-        )
-        .select()
-        .single();
+      const { data, error: err } = await withTimeout(
+        supabase
+          .from('event_edits')
+          .upsert(
+            {
+              event_id: event.id,
+              venue: changed('venue'),
+              when: changed('when'),
+              team: changed('team'),
+              about: changed('about'),
+              image_path: imagePath,
+            },
+            { onConflict: 'event_id' },
+          )
+          .abortSignal(AbortSignal.timeout(15000))
+          .select()
+          .single(),
+        15000,
+      );
       if (err) {
         if (err.code === '23514') setError('That text has a phone number, email or link in it.');
         else if (err.code === '42501' || err.message.includes('row-level security'))
           setError('This account can’t edit this event.');
+        else if (looksOffline(err))
+          setError('Couldn’t reach the editing service. Check your connection and save again.');
         else setError(`Couldn’t save: ${err.message}`);
         return;
       }
@@ -134,6 +165,12 @@ export function EventEditor({
       setSaved(true);
       refreshEdits();
       onSaved(data as EventEdit);
+    } catch (thrown) {
+      setError(
+        looksOffline(thrown)
+          ? 'Couldn’t reach the editing service. Check your connection and save again.'
+          : 'Couldn’t save. Try again in a minute.',
+      );
     } finally {
       setSaving(false);
     }

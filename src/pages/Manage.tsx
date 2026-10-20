@@ -29,12 +29,27 @@ function readAuthError(): string | null {
     : null;
 }
 
+function looksOffline(err: unknown): boolean {
+  const name = err instanceof Error ? err.name : '';
+  const message = err && typeof err === 'object' && 'message' in err ? String(err.message) : String(err);
+  return name === 'AbortError' || name === 'TimeoutError' || /fetch|network|abort|timeout/i.test(message);
+}
+
+// the raw error goes to the console only; the page shows plain words
+function loadErrorText(err: unknown): string {
+  console.warn('manage: loading editors failed', err);
+  return looksOffline(err)
+    ? `Couldn’t reach the editing service. Check your connection and try again; if it keeps failing, email ${CONTACT.email}.`
+    : `Couldn’t load your events. Try again, or email ${CONTACT.email}.`;
+}
+
 export default function Manage() {
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
   // the editor rows and edits fetched for one user; ignored once the user changes
   const [loaded, setLoaded] = useState<{ userId: string; clubs: EditorRow[]; error: string | null } | null>(null);
   const [edits, setEdits] = useState<Record<string, EventEdit>>({});
+  const [attempt, setAttempt] = useState(0);
   const [authError] = useState<string | null>(readAuthError);
 
   // an admin page: keep it out of search results
@@ -55,17 +70,28 @@ export default function Manage() {
   useEffect(() => {
     if (!supabase) return;
     let live = true;
-    void supabase.auth.getSession().then(({ data }) => {
-      if (!live) return;
-      setSession(data.session);
-      setReady(true);
-    });
+    // a slow or down supabase shouldn't hold the page blank: after 10 s show the signed-out view
+    const giveUp = setTimeout(() => {
+      if (live) setReady(true);
+    }, 10000);
+    void supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!live) return;
+        setSession(data.session);
+        setReady(true);
+      })
+      .catch(() => {
+        if (live) setReady(true);
+      })
+      .finally(() => clearTimeout(giveUp));
     const { data } = supabase.auth.onAuthStateChange((_event, next) => {
       setSession(next);
       setReady(true);
     });
     return () => {
       live = false;
+      clearTimeout(giveUp);
       data.subscription.unsubscribe();
     };
   }, []);
@@ -75,25 +101,29 @@ export default function Manage() {
     if (!supabase || !userId) return;
     let live = true;
     void Promise.all([
-      supabase.from('editors').select('club_slug,is_admin'),
-      supabase.from('event_edits').select('*'),
-    ]).then(([editorRes, editRes]) => {
-      if (!live) return;
-      const failure = editorRes.error ?? editRes.error;
-      if (failure) {
-        setLoaded({ userId, clubs: [], error: failure.message });
-        return;
-      }
-      const rows = (editorRes.data ?? []).map((r) => ({ slug: r.club_slug as string, isAdmin: Boolean(r.is_admin) }));
-      setLoaded({ userId, clubs: rows, error: null });
-      const byId: Record<string, EventEdit> = {};
-      for (const row of (editRes.data ?? []) as EventEdit[]) byId[row.event_id] = row;
-      setEdits(byId);
-    });
+      supabase.from('editors').select('club_slug,is_admin').abortSignal(AbortSignal.timeout(12000)),
+      supabase.from('event_edits').select('*').abortSignal(AbortSignal.timeout(12000)),
+    ])
+      .then(([editorRes, editRes]) => {
+        if (!live) return;
+        const failure = editorRes.error ?? editRes.error;
+        if (failure) {
+          setLoaded({ userId, clubs: [], error: loadErrorText(failure) });
+          return;
+        }
+        const rows = (editorRes.data ?? []).map((r) => ({ slug: r.club_slug as string, isAdmin: Boolean(r.is_admin) }));
+        setLoaded({ userId, clubs: rows, error: null });
+        const byId: Record<string, EventEdit> = {};
+        for (const row of (editRes.data ?? []) as EventEdit[]) byId[row.event_id] = row;
+        setEdits(byId);
+      })
+      .catch((err: unknown) => {
+        if (live) setLoaded({ userId, clubs: [], error: loadErrorText(err) });
+      });
     return () => {
       live = false;
     };
-  }, [userId]);
+  }, [userId, attempt]);
 
   if (!editingEnabled || !supabase) {
     return (
@@ -101,7 +131,7 @@ export default function Manage() {
     );
   }
 
-  if (!ready) return null;
+  if (!ready) return <PageHeader title="Edit your event">Checking your sign-in…</PageHeader>;
 
   const client = supabase;
   const mine = loaded && loaded.userId === userId ? loaded : null;
@@ -165,9 +195,21 @@ export default function Manage() {
             </p>
           )}
           {loadError ? (
-            <p role="alert" className="text-brass-hi">
-              Couldn’t load your events: {loadError}
-            </p>
+            <div className="flex flex-col items-start gap-4">
+              <p role="alert" className="text-brass-hi">
+                {loadError}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setLoaded(null);
+                  setAttempt((n) => n + 1);
+                }}
+                className={SECONDARY}
+              >
+                Try again
+              </button>
+            </div>
           ) : clubs === null ? (
             <p className="text-stone-mute">Loading your events…</p>
           ) : clubs.length === 0 ? (

@@ -4,7 +4,7 @@ import { LayoutGroup, motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight, Search } from 'lucide-react';
 import { PageHeader } from '../components/PageHeader';
 import { PassesButton } from '../components/PassesButton';
-import { useEvents } from '../data/eventEdits';
+import { cardSrcSet, posterFallback, useEvents } from '../data/eventEdits';
 import { CATEGORIES, CLUBS, feeValue, formatPrize, isCategory, type Category } from '../data/events';
 
 const EXPO = [0.16, 1, 0.3, 1] as const;
@@ -154,11 +154,16 @@ export default function Events() {
                     >
                       {e.image && (
                         <img
+                          key={e.image}
                           src={e.image}
+                          srcSet={cardSrcSet(e.image)}
+                          sizes="(min-width: 1280px) 424px, (min-width: 640px) calc(50vw - 88px), calc(100vw - 82px)"
                           alt=""
                           width={900}
                           height={675}
                           loading="lazy"
+                          decoding="async"
+                          onError={posterFallback(e.id, true)}
                           className="duotone mb-6 aspect-[4/3] w-full object-cover object-top transition-[filter] duration-700 ease-out-expo group-hover:[filter:none]"
                         />
                       )}

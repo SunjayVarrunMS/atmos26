@@ -4,7 +4,7 @@ import { ArrowLeft, Share2 } from 'lucide-react';
 import { PageHeader } from '../components/PageHeader';
 import { PassesButton } from '../components/PassesButton';
 import { CATEGORIES, CLUBS, clubUrl, formatPrize } from '../data/events';
-import { useEvent } from '../data/eventEdits';
+import { posterFallback, useEvent } from '../data/eventEdits';
 import { FEST } from '../data/fest';
 import NotFound from './NotFound';
 
@@ -110,10 +110,13 @@ export default function Event() {
             {event.image && (
               <div className="group mt-14 max-w-[24rem] md:mt-10">
                 <img
+                  key={event.image}
                   src={event.image}
                   alt={`${event.title} poster`}
                   width={900}
                   height={1200}
+                  decoding="async"
+                  onError={posterFallback(event.id, false)}
                   className="duotone h-auto w-full transition-[filter] duration-700 ease-out-expo group-hover:[filter:none]"
                 />
               </div>

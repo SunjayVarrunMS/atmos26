@@ -1,4 +1,6 @@
-import { useSyncExternalStore } from 'react';
+import { useSyncExternalStore, type SyntheticEvent } from 'react';
+import snapshot from 'virtual:event-edits';
+import CARDS from './eventCards.json';
 import { EVENTS, type FestEvent } from './events';
 
 // club PORs edit some fields of their events in Supabase. Public pages read them
@@ -22,6 +24,31 @@ export const LIMITS = { venue: 80, when: 60, team: 40, about: 600 } as const;
 
 export function posterUrl(path: string): string {
   return `${SUPABASE_URL}/storage/v1/object/public/posters/${path}`;
+}
+
+const cards = new Set<string>(CARDS);
+
+// the grid's 4:3 crops of a bundled poster (scripts/event_cards.py); club uploads have none
+export function cardSrcSet(image: string): string | undefined {
+  const name = /^\/events\/([\w-]+)\.webp$/.exec(image)?.[1];
+  if (!name || !cards.has(name)) return undefined;
+  return `/events/card/${name}-600.webp 600w, /events/card/${name}.webp 900w`;
+}
+
+// a club's poster that won't load (storage down) falls back to the bundled one, else the picture goes
+export function posterFallback(id: string, card: boolean) {
+  return (ev: SyntheticEvent<HTMLImageElement>) => {
+    const img = ev.currentTarget;
+    const bundled = EVENTS.find((e) => e.id === id)?.image;
+    if (!bundled || img.getAttribute('src') === bundled) {
+      img.hidden = true;
+      return;
+    }
+    const set = card ? cardSrcSet(bundled) : undefined;
+    if (set) img.srcset = set;
+    else img.removeAttribute('srcset');
+    img.src = bundled;
+  };
 }
 
 const TEXT_FIELDS = ['venue', 'when', 'team', 'about'] as const;
@@ -55,27 +82,72 @@ export function contactProblem(text: string): string | null {
   return null;
 }
 
-let merged: FestEvent[] = EVENTS;
+// this browser's copy of the last edits it fetched, for the next visit and for outages
+const CACHE_KEY = 'atmos:event-edits';
+
+function isEdit(row: unknown): row is EventEdit {
+  return (
+    typeof row === 'object' &&
+    row !== null &&
+    typeof (row as EventEdit).event_id === 'string' &&
+    typeof (row as EventEdit).updated_at === 'string'
+  );
+}
+
+function readCache(): EventEdit[] {
+  try {
+    const rows: unknown = JSON.parse(localStorage.getItem(CACHE_KEY) ?? '[]');
+    return Array.isArray(rows) ? rows.filter(isEdit) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeCache(rows: EventEdit[]): void {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(rows));
+  } catch {
+    // private mode or a full quota: the next visit fetches again
+  }
+}
+
+// each event's newest edit across the build's snapshot and this browser's cache
+function newest(...lists: EventEdit[][]): EventEdit[] {
+  const byId = new Map<string, EventEdit>();
+  for (const row of lists.flat()) {
+    const had = byId.get(row.event_id);
+    if (!had || Date.parse(row.updated_at) > Date.parse(had.updated_at)) byId.set(row.event_id, row);
+  }
+  return [...byId.values()];
+}
+
+// until Supabase answers (or if it never does), the edits baked in at build time
+// and the ones this browser saw last stand in for the live table
+let merged: FestEvent[] = editingEnabled ? applyEdits(EVENTS, newest(snapshot, readCache())) : EVENTS;
 const listeners = new Set<() => void>();
 let loading = false;
 let loaded = false;
 let warned = false;
+let failures = 0;
+let lastLoad = 0;
 
 async function load(): Promise<void> {
   if (!editingEnabled || loading) return;
   loading = true;
   try {
+    // the key as a query parameter keeps this a simple request: no CORS preflight round trip
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/event_edits?select=event_id,venue,when,team,about,image_path,updated_at`,
-      {
-        headers: { apikey: SUPABASE_ANON_KEY ?? '', Authorization: `Bearer ${SUPABASE_ANON_KEY}` },
-        signal: AbortSignal.timeout(8000),
-      },
+      `${SUPABASE_URL}/rest/v1/event_edits?select=event_id,venue,when,team,about,image_path,updated_at&apikey=${encodeURIComponent(SUPABASE_ANON_KEY ?? '')}`,
+      { signal: AbortSignal.timeout(8000) },
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const rows: unknown = await res.json();
     if (!Array.isArray(rows)) throw new Error('unexpected response');
-    merged = applyEdits(EVENTS, rows as EventEdit[]);
+    const edits = rows.filter(isEdit);
+    merged = applyEdits(EVENTS, edits);
+    writeCache(edits);
+    failures = 0;
+    lastLoad = Date.now();
     listeners.forEach((listener) => listener());
   } catch (err) {
     // keep whatever we had; the static events are always a fine fallback
@@ -83,9 +155,17 @@ async function load(): Promise<void> {
       warned = true;
       console.warn('event edits unavailable', err);
     }
+    // two spaced-out retries, jittered so a busy Supabase isn't hit by everyone at once
+    failures += 1;
+    if (failures <= 2) setTimeout(() => void load(), failures * 15000 + Math.random() * 10000);
   } finally {
     loading = false;
   }
+}
+
+// a page left open (a phone on the fest's first day) picks up venue and time changes when it comes back
+function onVisible(): void {
+  if (document.visibilityState === 'visible' && Date.now() - lastLoad > 5 * 60_000) void load();
 }
 
 function subscribe(listener: () => void): () => void {
@@ -93,6 +173,7 @@ function subscribe(listener: () => void): () => void {
   if (!loaded) {
     loaded = true;
     void load();
+    document.addEventListener('visibilitychange', onVisible);
   }
   return () => {
     listeners.delete(listener);

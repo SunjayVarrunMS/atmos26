@@ -1,0 +1,22 @@
+# Netlify cache headers (atmos-bits.com). Vercel reads the same rules from vercel.json.
+# Vite's /assets/ files have a content hash in their name, so they never change.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fixed names that get regenerated (the world's machines, logo layers, photos), so an hour,
+# then served stale while the browser or Cloudflare checks for a new copy.
+# HTML stays uncached, so a deploy is picked up straight away.
+/world/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/shapes/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/logo/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/clubs/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/eras/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/gallery/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/sponsors/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400

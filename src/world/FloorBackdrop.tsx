@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Backdrop } from './backdrop';
 import type { FloorId } from './chambers';
-import { guessTier, type Tier } from './quality';
+import { guessTier, PHONE, type Tier } from './quality';
 
 /**
  * A floor of the building behind an inner page's header. Live where the
@@ -22,13 +22,21 @@ export default function FloorBackdrop({ floor }: { floor: FloorId }) {
         if (!gone) b = new m.Backdrop(el, floor, tier);
       });
     };
-    // the page's title and words paint first; the machine boots once the browser is idle
-    const idle = 'requestIdleCallback' in window ? window.requestIdleCallback(start, { timeout: 1500 }) : undefined;
-    const timer = idle === undefined ? window.setTimeout(start, 300) : undefined;
+    // the page's title and words paint first; the machine boots once the browser is idle.
+    // A phone also waits out the header's reveal (PageHeader: 0.45 s delay + 1 s), since
+    // compiling the scene mid-reveal stalls the text on a slow CPU
+    let idle: number | undefined;
+    const wait = window.setTimeout(
+      () => {
+        if ('requestIdleCallback' in window) idle = window.requestIdleCallback(start, { timeout: 1500 });
+        else start();
+      },
+      PHONE ? 1500 : 0,
+    );
     return () => {
       gone = true;
+      window.clearTimeout(wait);
       if (idle !== undefined) window.cancelIdleCallback(idle);
-      if (timer !== undefined) window.clearTimeout(timer);
       b?.dispose();
     };
   }, [floor, tier]);

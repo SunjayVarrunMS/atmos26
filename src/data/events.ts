@@ -1,5 +1,6 @@
 // The ATMOS '26 line-up, from the events on the Flemmingo registration page and
-// the DEPP club sheet (14 Oct), plus days and venues from the fest's Instagram posts (13 Oct). Flemmingo's ticket prices are final; events it
+// the DEPP club sheet (14 Oct), plus days, venues, posters and prize pools from the fest's and clubs' Instagram posts
+// (up to 20 Oct; a poster's prize beats the sheet's). Flemmingo's ticket prices are final; events it
 // doesn't list keep the sheet's outside-participant price. Where these disagree
 // with the printed brochure, they win: it was set from an older sheet. Days and team sizes stay "TBA" until the club
 // confirms them. Club names and taglines are from SU Connect; no contacts.
@@ -25,6 +26,7 @@ const CLUB_LIST = {
   'acm': { name: 'ACM', tagline: 'Student chapter of the global ACM organisation.', logo: '/clubs/acm.webp' },
   'acm-w': { name: 'ACM-W', tagline: "The women's chapter of ACM BPHC.", logo: '/clubs/acm-w.webp' },
   'ad-astra': { name: 'Ad Astra', tagline: 'Astronomy and astrophysics on campus.', logo: '/clubs/ad-astra.webp' },
+  'aeolus': { name: 'Aeolus', tagline: 'Aerial robotics and unmanned aerial systems.', logo: '/clubs/aeolus.webp' },
   'alchemy': { name: 'Alchemy', tagline: 'The branch association for Chemistry.' },
   'arc': { name: 'Automation and Robotics Club', tagline: 'Electronics, mechanics and programming, combined.', logo: '/clubs/arc.webp' },
   'axiom': { name: 'Axiom', tagline: 'The branch association for Mathematics.', logo: '/clubs/axiom.webp' },
@@ -33,8 +35,11 @@ const CLUB_LIST = {
   'cea': { name: 'Civil Engineering Association', tagline: 'The branch association for Civil Engineering.', logo: '/clubs/cea.webp' },
   'crux': { name: 'CRUX', tagline: 'The programming and computing club of BPHC.', logo: '/clubs/crux.webp' },
   'csa': { name: 'Computer Science Association', tagline: 'The branch association for Computer Science.', logo: '/clubs/csa.webp' },
+  'designers-anonymous': { name: 'Designers Anonymous', tagline: 'Graphic design, UI/UX, posters and visuals.', logo: '/clubs/designers-anonymous.webp' },
+  'e-cell': { name: 'E-Cell', tagline: 'The Entrepreneurship Cell.', logo: '/clubs/e-cell.webp' },
   'economics-association': { name: 'Economics Association', tagline: 'The branch association for Economics.', logo: '/clubs/economics-association.webp' },
   'embryo': { name: 'Embryo', tagline: 'Hosts distinguished speakers at campus events.', logo: '/clubs/embryo.webp' },
+  'esports': { name: 'E-Sports', tagline: 'Campus-wide tournaments for Valorant, BGMI, FIFA and more.', logo: '/clubs/esports.webp' },
   'ieee': { name: 'IEEE', tagline: 'Student branch of the global IEEE organization.', logo: '/clubs/ieee.webp' },
   'mea': { name: 'Mechanical Engineering Association', tagline: 'The branch association for Mechanical Engineering.', logo: '/clubs/mea.webp' },
   'panacea': { name: 'Panacea', tagline: 'The branch association for Pharmacy.', logo: '/clubs/panacea.webp' },
@@ -78,7 +83,7 @@ export interface FestEvent {
 const LIST: FestEvent[] = [
   // competitions
   {
-    id: 'break-the-case', title: 'Break The Case', category: 'competitions', prize: 400000, fee: 'Free', note: 'Consulting case competition', clubs: ['bhcg'],
+    id: 'break-the-case', title: 'Break The Case', category: 'competitions', prize: 400000, fee: 'Free', note: 'Consulting case competition', team: '1–4', clubs: ['bhcg'], image: '/events/break-the-case.webp',
     about: 'One of India’s premier case competitions, with KPMG as knowledge partner. Three rounds of real-world business problems end with a pitch to a panel of industry leaders.',
   },
   {
@@ -106,7 +111,7 @@ const LIST: FestEvent[] = [
     about: 'An industry speaker session and an analytics workshop, then a 24-hour challenge: derive insights from traffic data, build predictive models and optimise routes.',
   },
   {
-    id: 'pit-trading', title: 'Pit Trading', category: 'competitions', prize: 50000, fee: '₹249', clubs: ['traders'],
+    id: 'pit-trading', title: 'Pit Trading', category: 'competitions', prize: 40000, fee: '₹249', clubs: ['traders'], image: '/events/pit-trading.webp', when: 'Fri 23 Oct, 12:00–15:00', venue: 'F102',
     about: 'A live virtual trading floor: same starting money, random stocks, and a stream of fake breaking news. Three 30-minute rounds; the top three portfolios win.',
   },
   {
@@ -114,7 +119,7 @@ const LIST: FestEvent[] = [
     about: 'Build an autonomous research agent that digs through a NIFTY 50 company’s filings and news to find a non-obvious, evidence-backed insight. Top teams get pre-placement interviews.',
   },
   {
-    id: 'mech-ideathon', title: 'MEA Ideathon', category: 'competitions', prize: 35000, fee: '₹200', clubs: ['mea'],
+    id: 'mech-ideathon', title: 'MEA Ideathon', category: 'competitions', prize: 35000, fee: '₹200', clubs: ['mea'], image: '/events/mech-ideathon.webp', when: 'Fri 23 – Sun 25 Oct, pitches Sun 13:00–15:00', venue: 'F208',
     about: 'An intensive brainstorming competition. Teams develop solutions to problems and pitch their concepts, business models or prototypes to a panel of judges.',
   },
   {
@@ -134,19 +139,19 @@ const LIST: FestEvent[] = [
     about: 'A cybersecurity tournament across web, crypto, reversing, pwn and forensics. Open online; prize money is for registrants only.',
   },
   {
-    id: 'coinquest', title: 'Coinquest', category: 'competitions', prize: 25000, fee: '₹99', clubs: ['blocksoc', 'traders'],
+    id: 'coinquest', title: 'Coinquest', category: 'competitions', prize: 20000, fee: '₹99', clubs: ['blocksoc', 'traders'], when: 'Fri 23 – Sun 25 Oct',
     about: 'A beginner-friendly mock crypto trading competition with virtual funds, real market conditions and a live leaderboard.',
   },
   {
-    id: 'arthasastra', title: 'Arthasastra', category: 'competitions', prize: 25000, fee: '₹200', clubs: ['economics-association'],
+    id: 'arthasastra', title: 'Arthasastra', category: 'competitions', prize: 25000, fee: '₹200', team: '1–3', clubs: ['economics-association'], image: '/events/arthasastra.webp', when: 'Wed 21 Oct, 19:00–23:00', venue: 'F103',
     about: 'The Economics Association’s flagship quiz on economics, finance and current affairs. Three elimination rounds, open to every discipline.',
   },
   {
-    id: 'enigma', title: 'Enigma', category: 'competitions', prize: 20000, fee: 'Free', team: '1–4', clubs: ['blocksoc'],
+    id: 'enigma', title: 'Enigma', category: 'competitions', prize: 10000, fee: '₹200', team: '1–4', clubs: ['blocksoc'],
     about: 'A blockchain strategy simulation: build, secure and govern your own network through forks, attacks and governance dilemmas.',
   },
   {
-    id: 'bulls-and-brains', title: 'Bulls & Brains', category: 'competitions', prize: 20000, fee: '₹199', clubs: ['traders'],
+    id: 'bulls-and-brains', title: 'Bulls & Brains', category: 'competitions', prize: 15000, fee: '₹199', clubs: ['traders'], image: '/events/bulls-and-brains.webp', when: 'Sat 24 Oct, 12:00–14:00', venue: 'F104',
     about: 'A beginner-friendly trading quiz played on your phone across four rounds, from warm-ups to a 5× survivor final. No finance background needed.',
   },
   {
@@ -158,7 +163,7 @@ const LIST: FestEvent[] = [
     about: 'A quiz on everything engines: combustion and propulsion, iconic machines, motorsport history and the future of mobility.',
   },
   {
-    id: 'flood-risk', title: 'Urban Flood Risk Prediction Challenge', category: 'competitions', prize: 10000, fee: '₹200', note: 'Online ML hackathon · Judged on Kaggle', clubs: ['cea'], image: '/events/flood-risk.webp', when: 'Sat 24 – Sun 25 Oct',
+    id: 'flood-risk', title: 'Urban Flood Risk Prediction Challenge', category: 'competitions', prize: 10000, fee: '₹200', note: 'Online ML hackathon · Judged on Kaggle', clubs: ['cea'], image: '/events/flood-risk.webp', when: 'Sat 24 – Sun 25 Oct', venue: 'Online, on Kaggle',
     about: 'Predict flood risk for unseen locations from terrain, drainage, land-use and rainfall data, scored live on a Kaggle leaderboard.',
   },
   {
@@ -170,7 +175,7 @@ const LIST: FestEvent[] = [
     about: 'The Quiz Club’s flagship general quiz: history, pop culture, sports, literature, geography and everything in between.',
   },
   {
-    id: 'fifa-auction', title: 'FUTBID: FIFA Auction', category: 'competitions', prize: 8000, fee: '₹199', team: 'Up to 3', clubs: ['ace'],
+    id: 'fifa-auction', title: 'FUTBID: FIFA Auction', category: 'competitions', prize: 7500, fee: '₹199', team: 'Up to 3', clubs: ['ace'], image: '/events/fifa-auction.webp', when: 'Fri 23 Oct, 14:00–18:00', venue: 'F107',
     about: 'Enter a live FIFA player auction and build the best 5-a-side squad on a budget.',
   },
   {
@@ -178,11 +183,11 @@ const LIST: FestEvent[] = [
     about: 'Work together through maths puzzles to defuse the bomb.',
   },
   {
-    id: 'concrete-bowling', title: 'Concrete Bowling', category: 'competitions', prize: 6000, fee: '₹200', note: 'At the Central Workshop', clubs: ['cea'], image: '/events/concrete-bowling.webp', when: 'Fri 23 – Sun 25 Oct',
+    id: 'concrete-bowling', title: 'Concrete Bowling', category: 'competitions', prize: 6000, fee: '₹200', note: 'At the Central Workshop', clubs: ['cea'], image: '/events/concrete-bowling.webp', when: 'Fri 23 – Sun 25 Oct', venue: 'Central Workshop',
     about: 'Standard bowling rules with cast concrete balls and pins. Scores are ranked through the fest; the highest win.',
   },
   {
-    id: 'escape-room', title: 'Escape Room: All Eyes on You', category: 'competitions', prize: 5000, fee: '₹100 per head', team: '4–7', clubs: ['spectrum'],
+    id: 'escape-room', title: 'Escape Room: All Eyes on You', category: 'competitions', prize: 5000, fee: '₹100 per head', team: '4–7', clubs: ['spectrum'], image: '/events/escape-room.webp', when: 'Fri 23 – Sun 25 Oct, 10:00–20:00', venue: 'J107',
     about: 'It’s 2030 and you’re trapped in a black site, with a corrupted AI sabotaging every move. Solve the ciphers and puzzles before the clock runs out.',
   },
   {
@@ -198,7 +203,7 @@ const LIST: FestEvent[] = [
     about: 'You get AI-generated code full of bugs. Fix it.',
   },
   {
-    id: 'last-autopsy', title: 'The Last Autopsy', category: 'competitions', prize: 5000, fee: '₹250', clubs: ['panacea'],
+    id: 'last-autopsy', title: 'The Last Autopsy', category: 'competitions', prize: 10000, fee: '₹250', clubs: ['panacea'], image: '/events/last-autopsy.webp', when: 'Fri 23 – Sat 24 Oct, 10:00–17:00', venue: 'J120',
     about: 'A murder scene, and a crime to solve.',
   },
   {
@@ -217,11 +222,39 @@ const LIST: FestEvent[] = [
     id: 'cubing', title: 'CubingATMOS 2026', category: 'competitions', prize: null, fee: '₹900', note: 'WCA speedcubing · Two-day event', clubs: ['axiom'],
     about: 'The headliner: 100+ cubers from BITS and around the city compete across speedcubing categories over two days, under the World Cube Association.',
   },
+  {
+    id: 'deal-with-the-devil', title: 'Deal With The Devil', category: 'competitions', prize: 25000, fee: 'TBA', note: 'Coding competition', clubs: ['csa'], image: '/events/deal-with-the-devil.webp', when: 'Sat 24 Oct, 14:00–17:00', venue: 'D313 (CC lab)',
+    about: 'Buy hints from an AI that gets more corrupted the deeper you go. Catch its confident nonsense, bid smart and debug harder.',
+  },
+  {
+    id: 'speedcad', title: 'SpeedCAD', category: 'competitions', prize: 15000, fee: 'TBA', note: '1v1 knockout CAD competition', clubs: ['sae'], image: '/events/speedcad.webp', when: 'Sun 25 Oct, 14:00–17:00', venue: 'F107',
+    about: 'Two designers get the same drawing and race to recreate it in CAD (SolidWorks or Fusion). Accuracy and speed decide who advances. Bring a laptop or use one provided.',
+  },
+  {
+    id: 'accidental-overdose', title: 'Accidental Overdose', category: 'competitions', prize: 3000, fee: 'TBA', note: 'Drug trivia', clubs: ['panacea'], image: '/events/accidental-overdose.webp', when: 'Sun 25 Oct, 10:00–17:00', venue: 'G106',
+    about: 'A trivia contest on drugs and medicines. Trust your instincts: one wrong answer could be an overdose of embarrassment.',
+  },
+  {
+    id: 'valorant', title: 'Valorant Tournament', category: 'competitions', prize: 2500, fee: 'TBA', clubs: ['esports'], image: '/events/valorant.webp', when: 'Fri 23 Oct', venue: 'Online',
+  },
+  {
+    id: 'f1-tournament', title: 'F1 Tournament', category: 'competitions', prize: 2500, fee: 'TBA', note: 'Formula 1 game', clubs: ['esports'], image: '/events/f1-tournament.webp', when: 'Fri 23 Oct', venue: 'F108 and F109',
+  },
+  {
+    id: 'fifa-tournament', title: 'FIFA Tournament', category: 'competitions', prize: 2000, fee: 'TBA', note: 'EA FC 25', clubs: ['esports'], image: '/events/fifa-tournament.webp', when: 'Fri 23 Oct', venue: 'F108 and F109',
+  },
+  {
+    id: 'smash-karts', title: 'Smash Karts Tournament', category: 'competitions', prize: 2000, fee: 'TBA', clubs: ['esports'], image: '/events/smash-karts.webp', when: 'Fri 23 Oct', venue: 'Online',
+  },
 
   // workshops
   {
-    id: 'prompt-lab', title: 'Beyond the Prompt', category: 'workshops', prize: 10000, fee: '₹749', note: 'Prompt Lab: AI workshop and hackathon', clubs: ['ace'],
+    id: 'prompt-lab', title: 'Beyond the Prompt', category: 'workshops', prize: 10000, fee: '₹749', note: 'Prompt Lab: AI workshop and hackathon', clubs: ['ace'], image: '/events/prompt-lab.webp', when: 'Sun 25 Oct, 10:00', venue: 'G101',
     about: 'Building trustworthy AI agents: test AI on real engineering problems and learn to catch its errors and verify results.',
+  },
+  {
+    id: 'drone-counter-strike', title: 'Drone Counter Strike', category: 'workshops', prize: 10000, fee: '₹369 per person', team: '3–6', note: 'Workshop and hackathon · ₹5,000 / ₹3,000 / ₹2,000', clubs: ['aeolus'], image: '/events/drone-counter-strike.webp', when: 'Fri 23 – Sun 25 Oct', venue: 'D313 and the Embedded Systems Lab',
+    about: 'Join S.H.I.E.L.D. @BPHC in securing Earth’s airspace: deploy a Raspberry Pi to detect incoming drones, then lock onto and track them in real time with YOLO-based detection and a gimbal. Workshops run on 23 Oct (14:00–16:00) and 24 Oct (13:00–15:00). The hackathon on 25 Oct is a two-hour slot plus a 15-minute finals slot of your choice, and one registration covers both.',
   },
   {
     id: 'card-counting', title: 'Card Counting Workshop & Showdown', category: 'workshops', prize: 5000, fee: '₹150', note: 'One-day event', clubs: ['axiom'],
@@ -236,7 +269,7 @@ const LIST: FestEvent[] = [
     about: 'Learn the ins and outs of rocketry and build your own model rocket, with motors and DAQ systems.',
   },
   {
-    id: 'pcb-workshop', title: 'PCB Workshop', category: 'workshops', prize: null, fee: '₹1499', clubs: ['seds'],
+    id: 'pcb-workshop', title: 'PCB Workshop', category: 'workshops', prize: null, fee: '₹1499', clubs: ['seds'], image: '/events/pcb-workshop.webp', when: 'Fri 23 – Sun 25 Oct, 09:00–12:00', venue: 'F207 and F208',
     about: 'The full design process, from schematics to assembling a PCB you designed yourself.',
   },
   {
@@ -248,7 +281,7 @@ const LIST: FestEvent[] = [
     about: 'An interactive, practical workshop hosted by a BITS professor, including a visit to the clean room.',
   },
   {
-    id: 'etch-a-sketch', title: 'Etch-A-Sketch Workshop', category: 'workshops', prize: null, fee: '₹550', clubs: ['arc'],
+    id: 'etch-a-sketch', title: 'Etch-A-Sketch Workshop', category: 'workshops', prize: null, fee: '₹550', clubs: ['arc'], image: '/events/etch-a-sketch.webp', when: 'Sat 24 Oct',
     about: 'Wire up an Arduino and build a device that draws on a display. All resources provided.',
   },
   {
@@ -276,17 +309,25 @@ const LIST: FestEvent[] = [
     about: 'Decode real mission data and build a detection pipeline to spot planets light-years away.',
   },
   {
-    id: 'perfume', title: 'Make Your Own Perfume', category: 'workshops', prize: null, fee: '₹249', clubs: ['alchemy'], image: '/events/perfume.webp',
+    id: 'perfume', title: 'Make Your Own Perfume', category: 'workshops', prize: null, fee: '₹249', clubs: ['alchemy'], image: '/events/perfume.webp', when: 'Fri 23 – Sun 25 Oct', venue: 'G105',
     about: 'Pick from over 12 fragrances and take home your own 10 ml bottle.',
   },
   {
-    id: 'code-the-chain', title: 'Code the Chain', category: 'workshops', prize: null, fee: 'Free', note: 'Web3 workshop', clubs: ['blocksoc'],
+    id: 'code-the-chain', title: 'Code the Chain', category: 'workshops', prize: null, fee: '₹450', note: 'Web3 workshop', clubs: ['blocksoc'],
     about: 'Web3 from the ground up: smart contracts, wallets and dApps, then build and deploy a small project to a testnet with mentors on hand.',
+  },
+  {
+    id: 'racecar-dynamics', title: 'Racecar Dynamics Workshop', category: 'workshops', prize: null, fee: 'TBA', note: 'Run by a Renault vehicle dynamics engineer', clubs: ['sae'], image: '/events/racecar-dynamics.webp', when: 'Fri 23 – Sat 24 Oct, 14:00–17:00', venue: 'F207',
+    about: 'Two afternoons on vehicle simulation, the key vehicle parameters and tuning them for the optimum lap, with hands-on Simulink.',
+  },
+  {
+    id: 'zenith', title: 'ZENITH: Hardware for AI/ML', category: 'workshops', prize: null, fee: 'TBA', clubs: ['phoenix'], image: '/events/zenith.webp', when: 'Fri 23 Oct, 11:00–13:00', venue: 'F107',
+    about: 'How different hardware suits different AI/ML applications, and how software becomes hardware execution: live demos on SiLabs MCUs with an AI accelerator and a PYNQ-Z2 FPGA.',
   },
 
   // experiences
   {
-    id: 'chemistry-casino', title: 'Chemistry Casino', category: 'experiences', prize: 30000, fee: '₹399', note: 'Leaderboard runs all three days', clubs: ['alchemy'], image: '/events/chemistry-casino.webp',
+    id: 'chemistry-casino', title: 'Chemistry Casino', category: 'experiences', prize: 30000, fee: '₹399', note: 'Leaderboard runs all three days', clubs: ['alchemy'], image: '/events/chemistry-casino.webp', when: 'Fri 23 – Sun 25 Oct', venue: 'I122',
     about: 'Poker, blackjack and roulette with a pinch of chemistry. Buy in for chips; the best balance after three days takes the prize pool.',
   },
   {
@@ -298,15 +339,15 @@ const LIST: FestEvent[] = [
     about: 'Observe the Sun safely through filtered telescopes and track sunspot clusters.',
   },
   {
-    id: 'f1-simrig', title: 'F1 SimRig', category: 'experiences', prize: null, fee: '₹250 per 10 min', clubs: ['arc', 'sae'],
+    id: 'f1-simrig', title: 'F1 SimRig', category: 'experiences', prize: null, fee: '₹250 per 10 min', clubs: ['arc', 'sae'], image: '/events/f1-simrig.webp', when: 'Fri 23 – Sun 25 Oct', venue: 'LTC lobby',
     about: 'A 4D race car simulator built from scratch by ARC and SAE engineers, with VR and haptic feedback you feel through every drift and crash.',
   },
   {
-    id: 'rage-room', title: 'Rage Room', category: 'experiences', prize: null, fee: '₹250', clubs: ['cea'],
+    id: 'rage-room', title: 'Rage Room', category: 'experiences', prize: null, fee: '₹250', clubs: ['cea'], image: '/events/rage-room.webp', when: 'Fri 23 – Sun 25 Oct', venue: 'D123',
     about: 'Smash concrete and construction materials with real tools, safely and under supervision.',
   },
   {
-    id: 'arcade-machine', title: 'Arcade', category: 'experiences', prize: null, fee: '₹150 per 15 min', clubs: ['arc'],
+    id: 'arcade-machine', title: 'Arcade', category: 'experiences', prize: null, fee: '₹150 per 15 min', clubs: ['arc'], image: '/events/arcade-machine.webp', when: 'Fri 23 – Sun 25 Oct', venue: 'LTC lobby',
     about: 'Golden-era games on arcade machines built by ARC, with tactile buttons and old-style displays.',
   },
   {
@@ -319,6 +360,22 @@ const LIST: FestEvent[] = [
   {
     id: 'auto-expo', title: 'Auto Expo', category: 'experiences', prize: null, fee: 'Free', clubs: ['mea'],
     about: 'A showcase of vehicles from modified cars to supercars. Walk through, see the machines up close and meet the drivers.',
+  },
+  {
+    id: 'pixel-palette', title: 'Pixel Palette', category: 'experiences', prize: null, fee: 'TBA', note: 'With Date Bites by Farmley', clubs: ['designers-anonymous'], image: '/events/pixel-palette.webp', when: 'Fri 23 – Sat 24 Oct, 15:00–18:00', venue: 'LTC lobby',
+    about: 'Make your own pixel art, whether you are a seasoned artist or have never touched a pixel.',
+  },
+  {
+    id: 'pay-and-play', title: 'Pay and Play', category: 'experiences', prize: null, fee: 'TBA', note: 'Gaming room', clubs: ['esports'], when: 'Fri 23 – Sun 25 Oct',
+    about: 'Your ultimate gaming room: pick up a controller or get on the sim rig and game away.',
+  },
+  {
+    id: 'startup-talk', title: 'Talk: Srinivas Kollipara', category: 'experiences', prize: null, fee: 'TBA', note: 'Co-founder of T-Hub', clubs: ['embryo', 'e-cell'], image: '/events/startup-talk.webp', when: 'Fri 23 Oct, 11:00', venue: 'F103',
+    about: 'Srinivas Kollipara is an angel investor and co-founder of T-Hub, and has played a key role in building India’s technology startup system.',
+  },
+  {
+    id: 'space-talk', title: 'Talk: Awais Ahmed', category: 'experiences', prize: null, fee: 'TBA', note: 'Co-founder and CEO of Pixxel', clubs: ['embryo', 'seds'], image: '/events/space-talk.webp', when: 'Sat 24 Oct, 13:30', venue: 'F103',
+    about: 'A masterclass from BITS alumnus Awais Ahmed, whose company Pixxel builds high-resolution hyperspectral Earth-imaging satellites, on scaling a global space company.',
   },
 ];
 

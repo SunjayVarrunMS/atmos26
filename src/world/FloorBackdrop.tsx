@@ -17,18 +17,11 @@ export default function FloorBackdrop({ floor }: { floor: FloorId }) {
     // three.js comes with the backdrop, so the still tier never downloads it
     let b: Backdrop | undefined;
     let gone = false;
-    const start = () => {
-      import('./backdrop').then((m) => {
-        if (!gone) b = new m.Backdrop(el, floor, tier);
-      });
-    };
-    // the page's title and words paint first; the machine boots once the browser is idle
-    const idle = 'requestIdleCallback' in window ? window.requestIdleCallback(start, { timeout: 1500 }) : undefined;
-    const timer = idle === undefined ? window.setTimeout(start, 300) : undefined;
+    import('./backdrop').then((m) => {
+      if (!gone) b = new m.Backdrop(el, floor, tier);
+    });
     return () => {
       gone = true;
-      if (idle !== undefined) window.cancelIdleCallback(idle);
-      if (timer !== undefined) window.clearTimeout(timer);
       b?.dispose();
     };
   }, [floor, tier]);

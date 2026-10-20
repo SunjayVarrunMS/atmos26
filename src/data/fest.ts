@@ -20,7 +20,7 @@ export const FEST = {
   registration: { open: true, url: 'https://flemmingo.in/fests/cmv5ldlzu0000lb06f8nmef17' as string },
   coordinates: { lat: 17.5449, lng: 78.5718 },
   // absolute links for share cards; WhatsApp and Instagram ignore relative ones
-  url: 'https://atmos26.vercel.app',
+  url: 'https://atmos-bits.com',
 } as const;
 
 export const CONTACT = {

@@ -3,7 +3,7 @@
 Club PORs keep their own events current at `atmos-bits.com/manage`: venue, day and time, team size, description and poster. A save goes live on `/events` and `/events/<id>` within seconds, with no deploy. Title, fee, prize and clubs stay in `src/data/events.ts`, because they are tied to Flemmingo and the brochure.
 
 How it fits together:
-- `src/data/events.ts` stays the base. Supabase holds only the overrides (`event_edits`). The site lays them over `EVENTS` after the first render (`src/data/eventEdits.ts`). If Supabase is down or the env vars are missing, the site shows `events.ts` as it is.
+- `src/data/events.ts` stays the base. Supabase holds only the overrides (`event_edits`). The site lays them over `EVENTS` (`src/data/eventEdits.ts`). Each build also fetches the edits once and bundles them, and each browser keeps the last edits it fetched, so if Supabase is slow or down the site shows the edits as of the last deploy (or the visitor's last visit, if newer). With the env vars missing, it shows `events.ts` as it is.
 - Sign-in is Google only. An account can edit an event only if its email is in `editors` with one of that event's club slugs. The database enforces this (RLS in `supabase/migrations/0001_event_edits.sql`), not the browser.
 - The database refuses phone numbers, emails, @handles and links in any field (the site carries no phone numbers or outside links). The form checks the same before saving.
 - Posters are resized to WebP in the browser (≤ 1200 px wide, about 300 KB) and stored in the public `posters` bucket under `<event_id>/`.
@@ -27,5 +27,5 @@ How it fits together:
 
 - **A new POR or club account:** insert a row into `editors`, and add the same address as a test user in Google Cloud → Google Auth Platform → Audience. The Google app stays in Testing (publishing needs a privacy policy page), so only test users can sign in (up to 100), and each sees a one-time "Google hasn't verified this app" screen. To remove access, delete the `editors` row. The account can still sign in but can't save anything.
 - **A new event in `events.ts`:** re-run step 2, so its club can edit it. If an event with saved edits is renamed or removed, the seed's delete stops with an error rather than dropping the club's edits. Move or delete that `event_edits` row first.
-- **Undo a bad edit:** in the Table editor, open `event_edits` and clear the field or delete the row. The site falls back to `events.ts`.
+- **Undo a bad edit:** in the Table editor, open `event_edits` and clear the field (preferred) or delete the row. The site falls back to `events.ts`. A deleted row can still show from the bundled copy while Supabase is down, so redeploy after deleting one (Vercel → Deployments → Redeploy).
 - **Share cards** (`/events/<id>` previews on WhatsApp and Instagram) are built from `events.ts` at deploy time, so a POR's edit doesn't change them until the facts are copied into `events.ts`.

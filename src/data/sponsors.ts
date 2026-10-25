@@ -20,12 +20,13 @@ export const SPONSOR_TIERS: SponsorTier[] = [
   },
   {
     tier: 'Partners',
-    slots: 4,
+    slots: 5,
     sponsors: [
       { name: 'Coca-Cola', logo: '/sponsors/coca-cola.webp', href: 'https://www.coca-cola.com/in/en', role: 'Proshow, Comedy Night and Beverages Partner' },
       { name: 'realme', href: 'https://www.realme.com/in/', role: 'Pronite and Smartphone Partner' },
       { name: 'Wonderla', logo: '/sponsors/wonderla.webp', href: 'https://www.wonderla.com', role: 'Partner' },
       { name: 'White Heaven Entertainments', logo: '/sponsors/white-heaven-entertainments.webp', href: 'https://whiteheavenentertainments.in', role: 'Partner' },
+      { name: 'Media Plus', logo: '/sponsors/media-plus.webp', href: 'https://mediaplusgroup.in', role: 'Official Media Partner' },
     ],
   },
   {

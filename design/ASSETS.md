@@ -60,6 +60,7 @@ Shaft-top stills `top.webp` (1280x800, from a 1600x1000 capture) and `top-portra
 
 ## Sponsor logos — `public/sponsors/*.webp`
 - `synchrony.webp`: the title sponsor's logo as the team supplied it (dark wordmark and yellow bars on white, `design/source/synchrony.jpg`), reversed for the black ground by `python scripts/sponsor_logo.py` (Pillow + numpy): white keyed out, wordmark turned white, bars keep their own yellow, cropped, lossless WebP with alpha and its origin in XMP. Replace it with Synchrony's official reversed file if they send one.
+- `media-plus.webp`: Media Plus's logo as the team supplied it on 24 October (transparent RGB PNG, `design/source/media-plus.png`; a CMYK print PDF came with it). Its gradient wordmark and square keep their own colours; only the grey `mediaplusgroup.in` line was reversed to white for the black ground. Cropped, fitted within 600 × 200 px with an 8 px transparent margin, lossless WebP with alpha and its origin in XMP (Pillow + numpy), 18 KB.
 
 ### Announced 2026 partners (23 October)
 
@@ -101,6 +102,7 @@ Sponsor credits are limited to the supplied 2026 announcements in `.ai/ref/atmos
 | German Gears India | Auto Expo 2026 | https://www.instagram.com/mea_bphc/reel/DeuIkYdT6d0/ |
 | KPMG | Title Partner · Break the Case (event-level credit) | `public/events/break-the-case.webp` (registration deadline explicitly says October 2026) |
 | Unstop | Powered by · Break the Case | `public/events/break-the-case.webp` |
+| Media Plus | Official Media Partner | Team-confirmed on 24 October 2026 (fest team WhatsApp, with the logo) |
 | CREST | Semiconductor Workshop collaborator; text fallback (no distinct clean logo verified on https://crest.bits-pilani.ac.in/) | https://www.instagram.com/atmos_bitshyd/p/Dedh3RhE_xH/ |
 
 Student organising clubs, their project teams (including JANUS) and speakers' employers are not treated as sponsors. CREST is included as the explicitly announced Semiconductor Workshop collaborator. No credits were carried over from 2024/2025 posts.

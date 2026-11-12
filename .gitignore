@@ -32,6 +32,8 @@ design/logo/debug/
 design/logo/layers/
 .impeccable/review/
 .playwright-mcp/
+test-results/
+playwright-report/
 .recording/
 .vercel
 .env*
